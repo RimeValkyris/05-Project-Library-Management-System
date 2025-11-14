@@ -26,7 +26,6 @@ public class LibraryLogin extends JFrame {
 	private JTextField textField;
 	private JPasswordField textField_1;
 	private JLabel lblNewLabel_1;
-	private JLabel lblNewLabel_2;
 
 	/**
 	 * Launch the application.
@@ -106,12 +105,6 @@ public class LibraryLogin extends JFrame {
 		btnNewButton.setFocusPainted(false);
 		contentPane.add(btnNewButton);
 		
-		ImageIcon originalIcon = new ImageIcon("Images/uno.jpg");
-		Image scaledImage = originalIcon.getImage().getScaledInstance(365, 450, Image.SCALE_SMOOTH);
-		ImageIcon scaledIcon = new ImageIcon(scaledImage);
-		lblNewLabel_2 = new JLabel(scaledIcon);
-		lblNewLabel_2.setBounds(0, 0, 362, 448);
-		contentPane.add(lblNewLabel_2);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -119,7 +112,7 @@ public class LibraryLogin extends JFrame {
 				String user = textField.getText();
 				String pass = new String(textField_1.getPassword());
 				if ("admin".equals(user) && "password".equals(pass)) {
-					LibraryDashboard ld = new LibraryDashboard(user);
+					LibraryDashboard ld = new LibraryDashboard();
 					ld.setVisible(true);
 					dispose();
 				}
