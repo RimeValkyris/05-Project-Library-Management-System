@@ -277,7 +277,7 @@ public class ManageBooks extends JFrame {
 		btnAdd.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnAdd.setBorderPainted(false);
 		btnAdd.setBackground(new Color(55, 65, 81));
-		btnAdd.setBounds(30, 439, 74, 40);
+		btnAdd.setBounds(54, 439, 74, 40);
 		panel_1.add(btnAdd);
 		
 		JButton btnDelete = new JButton("Delete");
@@ -315,7 +315,7 @@ public class ManageBooks extends JFrame {
 		btnDelete.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnDelete.setBorderPainted(false);
 		btnDelete.setBackground(new Color(55, 65, 81));
-		btnDelete.setBounds(263, 439, 74, 40);
+		btnDelete.setBounds(280, 439, 74, 40);
 		panel_1.add(btnDelete);
 		
 		JButton btnUpdate = new JButton("Update");
@@ -384,15 +384,7 @@ public class ManageBooks extends JFrame {
 					
 					// Update the book in the list and table
 					bookList.set(updateIndex, updatedBook);
-					DefaultTableModel model = (DefaultTableModel) table.getModel();
-					model.setValueAt(isbn, updateIndex, 0);
-					model.setValueAt(title, updateIndex, 1);
-					model.setValueAt(author, updateIndex, 2);
-					model.setValueAt(genre, updateIndex, 3);
-					model.setValueAt(publisher, updateIndex, 4);
-					model.setValueAt(year, updateIndex, 5);
-					String status = updatedBook.isAvailable() ? "Available" : "Checked Out";
-					model.setValueAt(status, updateIndex, 6);
+					refreshTable();
 					
 					// Clear fields and reset mode
 					textField.setText("");
@@ -419,8 +411,29 @@ public class ManageBooks extends JFrame {
 		btnUpdate.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnUpdate.setBorderPainted(false);
 		btnUpdate.setBackground(new Color(55, 65, 81));
-		btnUpdate.setBounds(125, 439, 111, 40);
+		btnUpdate.setBounds(149, 439, 111, 40);
 		panel_1.add(btnUpdate);
+		
+		JButton btnClearFields = new JButton("Clear");
+		btnClearFields.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+				textField_1.setText("");
+				textField_2.setText("");
+				textField_3.setText("");
+				textField_4.setText("");
+				textField_5.setText("");
+			}
+		});
+		btnClearFields.setOpaque(true);
+		btnClearFields.setForeground(Color.WHITE);
+		btnClearFields.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		btnClearFields.setFocusPainted(false);
+		btnClearFields.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnClearFields.setBorderPainted(false);
+		btnClearFields.setBackground(new Color(55, 65, 81));
+		btnClearFields.setBounds(299, 540, 74, 40);
+		panel_1.add(btnClearFields);
 		
 		JButton btnGoBack = new JButton("Go Back");
 		btnGoBack.addActionListener(new ActionListener() {
@@ -549,7 +562,12 @@ public class ManageBooks extends JFrame {
 		
 		table = new JTable();
 		
-		DefaultTableModel model = new DefaultTableModel();
+		DefaultTableModel model = new DefaultTableModel() {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		model.addColumn("ISBN");
 		model.addColumn("Book Title");
 		model.addColumn("Author");

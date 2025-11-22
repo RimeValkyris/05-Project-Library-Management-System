@@ -3,6 +3,8 @@ package lbs;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.awt.Cursor;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
+import javax.swing.JOptionPane;
 
 public class MemberManagement extends JFrame {
 
@@ -34,30 +37,23 @@ public class MemberManagement extends JFrame {
 	private JTextField textField_8;
 	private JTextField textField_9;
 	private JTable table;
-	private List<Member> members = new ArrayList<>();
+	// Make members globally accessible for dashboard/statistics (keeps existing usage)
+	public static List<Member> members = new ArrayList<>();
+	private boolean isEditing = false;
+    
+    // Helper accessor for encapsulation from other classes
+    public static int getMemberCount() {
+        return members.size();
+    }
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MemberManagement frame = new MemberManagement();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
 	public MemberManagement() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1454, 756);
+		setBounds(100, 100, 1566, 756);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -66,7 +62,7 @@ public class MemberManagement extends JFrame {
 		
 		JPanel panel_1_1_1 = new JPanel();
 		panel_1_1_1.setBackground(new Color(79, 70, 229));
-		panel_1_1_1.setBounds(0, 0, 1438, 49);
+		panel_1_1_1.setBounds(0, 0, 1557, 49);
 		contentPane.add(panel_1_1_1);
 		
 		JPanel panel_1 = new JPanel();
@@ -145,16 +141,16 @@ public class MemberManagement extends JFrame {
 		JLabel lblNewLabel_6 = new JLabel("Section and Year");
 		lblNewLabel_6.setForeground(Color.WHITE);
 		lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_6.setBounds(147, 193, 129, 14);
+		lblNewLabel_6.setBounds(196, 193, 129, 14);
 		panel_1.add(lblNewLabel_6);
 		
 		textField_4 = new JTextField();
-		textField_4.setBounds(10, 216, 119, 20);
+		textField_4.setBounds(10, 216, 165, 20);
 		panel_1.add(textField_4);
 		textField_4.setColumns(10);
 		
 		textField_5 = new JTextField();
-		textField_5.setBounds(146, 216, 130, 20);
+		textField_5.setBounds(195, 216, 130, 20);
 		panel_1.add(textField_5);
 		textField_5.setColumns(10);
 		
@@ -199,7 +195,7 @@ public class MemberManagement extends JFrame {
 		btnAdd.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnAdd.setBorderPainted(false);
 		btnAdd.setBackground(new Color(55, 65, 81));
-		btnAdd.setBounds(27, 466, 111, 40);
+		btnAdd.setBounds(41, 466, 111, 40);
 		panel_1.add(btnAdd);
 		
 		JButton btnGoBack_1_1 = new JButton("Update");
@@ -210,7 +206,7 @@ public class MemberManagement extends JFrame {
 		btnGoBack_1_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnGoBack_1_1.setBorderPainted(false);
 		btnGoBack_1_1.setBackground(new Color(55, 65, 81));
-		btnGoBack_1_1.setBounds(165, 466, 111, 40);
+		btnGoBack_1_1.setBounds(162, 466, 111, 40);
 		panel_1.add(btnGoBack_1_1);
 		
 		JButton btnGoBack_1_2 = new JButton("Remove");
@@ -221,36 +217,47 @@ public class MemberManagement extends JFrame {
 		btnGoBack_1_2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnGoBack_1_2.setBorderPainted(false);
 		btnGoBack_1_2.setBackground(new Color(55, 65, 81));
-		btnGoBack_1_2.setBounds(308, 466, 109, 40);
+		btnGoBack_1_2.setBounds(283, 466, 109, 40);
 		panel_1.add(btnGoBack_1_2);
+		
+		JButton btnClear = new JButton("Clear");
+		btnClear.setOpaque(true);
+		btnClear.setForeground(Color.WHITE);
+		btnClear.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+		btnClear.setFocusPainted(false);
+		btnClear.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnClear.setBorderPainted(false);
+		btnClear.setBackground(new Color(55, 65, 81));
+		btnClear.setBounds(325, 540, 89, 40);
+		panel_1.add(btnClear);
 		
 		JPanel panel_1_1 = new JPanel();
 		panel_1_1.setBackground(new Color(79, 70, 229));
-		panel_1_1.setBounds(0, 668, 1438, 49);
+		panel_1_1.setBounds(0, 668, 1557, 49);
 		contentPane.add(panel_1_1);
 		
 		JLabel lblNewLabel_10 = new JLabel("Library Member Table");
 		lblNewLabel_10.setForeground(Color.BLACK);
 		lblNewLabel_10.setFont(new Font("Tahoma", Font.BOLD, 24));
-		lblNewLabel_10.setBounds(750, 75, 265, 49);
+		lblNewLabel_10.setBounds(865, 74, 265, 49);
 		contentPane.add(lblNewLabel_10);
 		
 		JLabel lblNewLabel_11 = new JLabel("Search:");
-		lblNewLabel_11.setBounds(696, 128, 46, 14);
+		lblNewLabel_11.setBounds(811, 127, 46, 14);
 		contentPane.add(lblNewLabel_11);
 		
 		textField_9 = new JTextField();
-		textField_9.setBounds(750, 125, 265, 20);
+		textField_9.setBounds(865, 124, 265, 20);
 		contentPane.add(textField_9);
 		textField_9.setColumns(10);
 		
 		JButton btnNewButton = new JButton("Search");
-		btnNewButton.setBounds(1025, 124, 89, 23);
+		btnNewButton.setBounds(1140, 123, 89, 23);
 		contentPane.add(btnNewButton);
 		
 		table = new JTable();
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBounds(480, 173, 915, 455);
+		scrollPane.setBounds(480, 173, 1054, 455);
 		contentPane.add(scrollPane);
 		
 		DefaultTableModel model = new DefaultTableModel();
@@ -296,6 +303,17 @@ public class MemberManagement extends JFrame {
 					members.add(member);
 					
 					model.addRow(new Object[]{studentID, firstName, middleName, lastName, course, sectionAndYear, email, phoneNumber, dateJoined});
+					
+					// Clear the input fields after adding
+					textField.setText("");
+					textField_1.setText("");
+					textField_2.setText("");
+					textField_3.setText("");
+					textField_4.setText("");
+					textField_5.setText("");
+					textField_6.setText("");
+					textField_7.setText("");
+					textField_8.setText("");
 				} catch (NumberFormatException ex) {
 					// Handle invalid input, e.g., show error message
 					System.out.println("Invalid number format");
@@ -308,8 +326,137 @@ public class MemberManagement extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = table.getSelectedRow();
 				if (selectedRow != -1) {
-					members.remove(selectedRow);
-					model.removeRow(selectedRow);
+					int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this member?", "Confirm Remove", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						members.remove(selectedRow);
+						model.removeRow(selectedRow);
+					}
+				}
+			}
+		});
+		
+		btnGoBack.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Open the main dashboard and close this window
+				dispose();
+				new LibraryDashboard().setVisible(true);
+			}
+		});
+		
+		btnGoBack_1_1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!isEditing) {
+					int selectedRow = table.getSelectedRow();
+					if (selectedRow != -1) {
+						JOptionPane.showMessageDialog(null, "Edit the member detail and click update to confirm changes");
+						// Populate fields with selected row data
+						textField.setText(model.getValueAt(selectedRow, 0).toString());
+						textField_1.setText(model.getValueAt(selectedRow, 1).toString());
+						textField_2.setText(model.getValueAt(selectedRow, 2).toString());
+						textField_3.setText(model.getValueAt(selectedRow, 3).toString());
+						textField_4.setText(model.getValueAt(selectedRow, 4).toString());
+						textField_5.setText(model.getValueAt(selectedRow, 5).toString());
+						textField_6.setText(model.getValueAt(selectedRow, 6).toString());
+						textField_7.setText(model.getValueAt(selectedRow, 7).toString());
+						textField_8.setText(model.getValueAt(selectedRow, 8).toString());
+						isEditing = true;
+					}
+				} else {
+					try {
+						long studentID = Long.parseLong(textField.getText());
+						String firstName = textField_1.getText();
+						String middleName = textField_2.getText();
+						String lastName = textField_3.getText();
+						String course = textField_4.getText();
+						String sectionAndYear = textField_5.getText();
+						String email = textField_6.getText();
+						long phoneNumber = Long.parseLong(textField_7.getText());
+						String dateJoined = textField_8.getText();
+						
+						int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to update this member?", "Confirm Update", JOptionPane.YES_NO_OPTION);
+						if (result == JOptionPane.YES_OPTION) {
+							int selectedRow = table.getSelectedRow();
+							Member m = members.get(selectedRow);
+							m.setStudentID(studentID);
+							m.setFirstName(firstName);
+							m.setMiddleName(middleName);
+							m.setLastName(lastName);
+							m.setCourse(course);
+							m.setSectionAndYear(sectionAndYear);
+							m.setEmail(email);
+							m.setPhoneNumber(phoneNumber);
+							m.setDateJoined(dateJoined);
+							
+							model.setValueAt(studentID, selectedRow, 0);
+							model.setValueAt(firstName, selectedRow, 1);
+							model.setValueAt(middleName, selectedRow, 2);
+							model.setValueAt(lastName, selectedRow, 3);
+							model.setValueAt(course, selectedRow, 4);
+							model.setValueAt(sectionAndYear, selectedRow, 5);
+							model.setValueAt(email, selectedRow, 6);
+							model.setValueAt(phoneNumber, selectedRow, 7);
+							model.setValueAt(dateJoined, selectedRow, 8);
+						}
+					} catch (NumberFormatException ex) {
+						System.out.println("Invalid number format");
+					}
+					isEditing = false;
+				}
+			}
+		});
+		
+		btnNewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String searchText = textField_9.getText().toLowerCase();
+				model.setRowCount(0);
+				for (Member m : members) {
+					if (searchText.isEmpty() || 
+						m.getFirstName().toLowerCase().contains(searchText) ||
+						m.getLastName().toLowerCase().contains(searchText) ||
+						m.getCourse().toLowerCase().contains(searchText) ||
+						m.getEmail().toLowerCase().contains(searchText)) {
+						model.addRow(new Object[]{m.getStudentID(), m.getFirstName(), m.getMiddleName(), m.getLastName(), m.getCourse(), m.getSectionAndYear(), m.getEmail(), m.getPhoneNumber(), m.getDateJoined()});
+					}
+				}
+			}
+		});
+		
+		btnClear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+				textField_1.setText("");
+				textField_2.setText("");
+				textField_3.setText("");
+				textField_4.setText("");
+				textField_5.setText("");
+				textField_6.setText("");
+				textField_7.setText("");
+				textField_8.setText("");
+				isEditing = false;
+			}
+		});
+		
+		// Add double-click listener for table row edit
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int selectedRow = table.getSelectedRow();
+					if (selectedRow != -1) {
+						// Populate fields with selected row data
+						textField.setText(model.getValueAt(selectedRow, 0).toString());
+						textField_1.setText(model.getValueAt(selectedRow, 1).toString());
+						textField_2.setText(model.getValueAt(selectedRow, 2).toString());
+						textField_3.setText(model.getValueAt(selectedRow, 3).toString());
+						textField_4.setText(model.getValueAt(selectedRow, 4).toString());
+						textField_5.setText(model.getValueAt(selectedRow, 5).toString());
+						textField_6.setText(model.getValueAt(selectedRow, 6).toString());
+						textField_7.setText(model.getValueAt(selectedRow, 7).toString());
+						textField_8.setText(model.getValueAt(selectedRow, 8).toString());
+					}
 				}
 			}
 		});

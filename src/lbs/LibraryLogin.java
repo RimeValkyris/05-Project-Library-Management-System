@@ -34,7 +34,7 @@ public class LibraryLogin extends JFrame {
 	private JPasswordField textField_1;
 	private JLabel lblNewLabel_1;
 	
-	// User object for authentication (OOP: Encapsulation and Abstraction)
+
 	private User adminUser;
 
 	/**
