@@ -1,6 +1,5 @@
 package lbs;
 
-import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 

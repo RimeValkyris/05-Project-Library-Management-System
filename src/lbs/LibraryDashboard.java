@@ -1,7 +1,5 @@
 package lbs;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -55,7 +53,7 @@ public class LibraryDashboard extends JFrame {
 		Color btnHoverBg = new Color(64, 75, 95);
 		Color btnFg = Color.WHITE;
 		int btnWidth = 180;
-		int btnX = (246 - btnWidth) / 2; // center horizontally inside panel
+		
 		
 		JButton btnManage = new JButton("Manage Books");
 		btnManage.setBounds(32, 119, btnWidth, 40);
