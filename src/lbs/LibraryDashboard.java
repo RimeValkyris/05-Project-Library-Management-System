@@ -175,7 +175,7 @@ public class LibraryDashboard extends JFrame {
 		btnIssue.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new BorrowTransaction().setVisible(true);
+				new BorrowTransactionUI().setVisible(true);
 			}
 		});
 		
