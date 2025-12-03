@@ -111,23 +111,92 @@ public class BorrowTransactionUI extends JFrame {
         btnBack.setBounds(27, 470, 120, 40);
         leftPanel.add(btnBack);
 
-        // Right panel (table)
+        // Right panel with tabs
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(null);
         rightPanel.setBounds(400, 49, 784, 563);
         contentPane.add(rightPanel);
 
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setBounds(10, 10, 740, 530);
+        rightPanel.add(tabbedPane);
+
+        // Tab 1: Borrowed Books
+        JPanel borrowedPanel = new JPanel();
+        borrowedPanel.setLayout(null);
+
         JLabel lblBorrowed = new JLabel("Borrowed Books");
         lblBorrowed.setFont(new Font("Tahoma", Font.BOLD, 20));
         lblBorrowed.setBounds(10, 10, 200, 30);
-        rightPanel.add(lblBorrowed);
+        borrowedPanel.add(lblBorrowed);
 
         String[] columnNames = {"Title", "ISBN", "Student ID", "Issue Date", "Due Date"};
         model = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(10, 50, 740, 480);
-        rightPanel.add(scrollPane);
+        scrollPane.setBounds(10, 50, 700, 430);
+        borrowedPanel.add(scrollPane);
+
+        tabbedPane.addTab("Borrowed Books", borrowedPanel);
+
+        // Tab 2: Members
+        JPanel membersPanel = new JPanel();
+        membersPanel.setLayout(null);
+
+        JLabel lblMembers = new JLabel("Members");
+        lblMembers.setFont(new Font("Tahoma", Font.BOLD, 20));
+        lblMembers.setBounds(10, 10, 200, 30);
+        membersPanel.add(lblMembers);
+
+        String[] memberColumns = {"Student ID", "First Name", "Last Name", "Email", "Phone"};
+        DefaultTableModel memberModel = new DefaultTableModel(memberColumns, 0);
+        JTable memberTable = new JTable(memberModel);
+        JScrollPane memberScroll = new JScrollPane(memberTable);
+        memberScroll.setBounds(10, 50, 700, 430);
+        membersPanel.add(memberScroll);
+
+        // Populate members
+        for (Member m : MemberManagement.members) {
+            memberModel.addRow(new Object[]{
+                String.valueOf(m.getStudentID()),
+                m.getFirstName(),
+                m.getLastName(),
+                m.getEmail(),
+                String.valueOf(m.getPhoneNumber())
+            });
+        }
+
+        tabbedPane.addTab("Members", membersPanel);
+
+        // Tab 3: Books
+        JPanel booksPanel = new JPanel();
+        booksPanel.setLayout(null);
+
+        JLabel lblBooks = new JLabel("Books");
+        lblBooks.setFont(new Font("Tahoma", Font.BOLD, 20));
+        lblBooks.setBounds(10, 10, 200, 30);
+        booksPanel.add(lblBooks);
+
+        String[] bookColumns = {"Title", "ISBN", "Author", "Genre", "Publisher", "Year"};
+        DefaultTableModel bookModel = new DefaultTableModel(bookColumns, 0);
+        JTable bookTable = new JTable(bookModel);
+        JScrollPane bookScroll = new JScrollPane(bookTable);
+        bookScroll.setBounds(10, 50, 700, 430);
+        booksPanel.add(bookScroll);
+
+        // Populate books
+        for (Book b : BookManager.instance.getBooks()) {
+            bookModel.addRow(new Object[]{
+                b.getTitle(),
+                b.getIsbn(),
+                b.getAuthor(),
+                b.getGenre(),
+                b.getPublisher(),
+                String.valueOf(b.getYear())
+            });
+        }
+
+        tabbedPane.addTab("Books", booksPanel);
 
         // Button Actions
         btnIssue.addActionListener(e -> issueBook());
