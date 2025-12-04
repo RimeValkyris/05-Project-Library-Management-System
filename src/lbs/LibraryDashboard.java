@@ -183,7 +183,7 @@ public class LibraryDashboard extends JFrame {
 		btnReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				new ReturnTransaction().setVisible(true);
+				new ReturnTransactionUI().setVisible(true);
 			}
 		});
 		

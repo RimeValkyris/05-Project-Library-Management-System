@@ -2,9 +2,7 @@ package lbs;
 
 import java.time.LocalDate;
 
-/**
- * Represents a borrowing transaction.
- */
+
 public class BorrowTransaction extends Transaction {
     private int borrowDays;
 
