@@ -17,5 +17,10 @@
 ###
 
 <h2 align="left">Authors:</h2>
+- [@RimeValkyris](https://www.github.com/RimeValkyris)
+- [@Sefqt](https://github.com/Sefqt)
+###
+
+<h2 align="left">Running Requirements:</h2>
 
 ###
