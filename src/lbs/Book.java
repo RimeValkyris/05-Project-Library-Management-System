@@ -9,7 +9,7 @@ public class Book extends LibraryItem {
     private String publisher;
     private int year;
 
-    // Constructor
+    
     public Book(String isbn, String title, String author, String genre, String publisher, int year) {
         super(title, isbn); // title and isbn (as itemId) to parent
         this.author = author;
@@ -18,7 +18,7 @@ public class Book extends LibraryItem {
         this.year = year;
     }
 
-    // Default constructor
+ 
     public Book() {
         super("", ""); // Call parent default
     }
