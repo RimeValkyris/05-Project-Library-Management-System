@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
 import javax.swing.JPasswordField;
+import java.awt.FlowLayout;
 
 public class LibraryLogin extends JFrame {
 
@@ -72,7 +73,7 @@ public class LibraryLogin extends JFrame {
 		lblNewLabel_1 = new JLabel("Welcome!");
 		lblNewLabel_1.setFont(new Font("SansSerif", Font.BOLD, 25));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(502, 64, 265, 55);
+		lblNewLabel_1.setBounds(502, 63, 265, 55);
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel = new JLabel("Username");
@@ -168,6 +169,28 @@ public class LibraryLogin extends JFrame {
 		}
 		lblNewLabel_2.setBounds(0, 0, 355, 448);
 		contentPane.add(lblNewLabel_2);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(79, 70, 229));
+		panel_1.setBounds(348, 0, 519, 49);
+		contentPane.add(panel_1);
+		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lblNewLabel_5 = new JLabel("Library Management System");
+		lblNewLabel_5.setForeground(Color.WHITE);
+		lblNewLabel_5.setFont(new Font("Oswald", Font.BOLD, 20));
+		panel_1.add(lblNewLabel_5);
+		
+		JPanel panel_1_1 = new JPanel();
+		panel_1_1.setBackground(new Color(79, 70, 229));
+		panel_1_1.setBounds(348, 399, 519, 49);
+		contentPane.add(panel_1_1);
+		panel_1_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JLabel lblNewLabel_5_1 = new JLabel("University of Ruina");
+		lblNewLabel_5_1.setForeground(Color.WHITE);
+		lblNewLabel_5_1.setFont(new Font("Oswald", Font.BOLD, 25));
+		panel_1_1.add(lblNewLabel_5_1);
 		
 		
 		btnNewButton.addActionListener(new ActionListener() {
@@ -315,5 +338,4 @@ public class LibraryLogin extends JFrame {
 		}
 		return canvas;
 	}
-
 }

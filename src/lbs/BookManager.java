@@ -19,8 +19,11 @@ public class BookManager {
         addBook(b3);
         Book b4 = new Book("978-0-345-34729-2", "The Guns of August", "Barbara Tuchman", "History", "Random House", 1962);
         addBook(b4);
+        Book b5 = new Book("978-0-335-45634-5", "All Quiet on the Western Front", "Erich Maria Remarque", "History", "Propyläen Verlag", 1929);
+        addBook(b5);
     }
 
+    
     public void addBook(Book b) {
         books.add(b);
     }

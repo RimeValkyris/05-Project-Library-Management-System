@@ -244,8 +244,8 @@ public class LibraryDashboard extends JFrame {
 		panel_1_1.add(lblNewLabel_5_1);
 		
 		JLabel lblNewLabel_1 = new JLabel("LIBRARY DASHBOARD");
-		lblNewLabel_1.setFont(new Font("SansSerif", Font.BOLD, 24));
-		lblNewLabel_1.setBounds(606, 60, 275, 59);
+		lblNewLabel_1.setFont(new Font("Oswald", Font.BOLD, 24));
+		lblNewLabel_1.setBounds(625, 58, 207, 59);
 		contentPane.add(lblNewLabel_1);
 		
 		JPanel panel_2_1_1 = new JPanel();
