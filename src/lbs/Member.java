@@ -1,8 +1,7 @@
-
-
 package lbs;
 public class Member {
-		private long StudentID;
+		private String memberCode; // e.g., MEM001 (auto-generated)
+		private long studentNumber; // the student number entered by the user
 		private String FirstName;
 		private String MiddleName;
 		private String LastName;
@@ -12,10 +11,12 @@ public class Member {
 		private long PhoneNumber;
 		private String DateJoined;
 		
-		public Member(long studentID, String firstName, String middleName, String lastName, String course,
-				String sectionAndYear, String email, long phoneNumber, String dateJoined) {
+		// Constructor: accepts studentNumber and other fields and auto-generates memberCode
+		public Member(long studentNumber, String firstName, String middleName, String lastName, String course,
+					String sectionAndYear, String email, long phoneNumber, String dateJoined) {
 			super();
-			StudentID = studentID;
+			this.studentNumber = studentNumber;
+			this.memberCode = MemberIdGenerator.nextId();
 			FirstName = firstName;
 			MiddleName = middleName;
 			LastName = lastName;
@@ -26,12 +27,36 @@ public class Member {
 			DateJoined = dateJoined;
 		}
 		
-		public long getStudentID() {
-			return StudentID;
+		// Optional constructor when loading with an existing memberCode
+		public Member(String memberCode, long studentNumber, String firstName, String middleName, String lastName, String course,
+					String sectionAndYear, String email, long phoneNumber, String dateJoined) {
+			super();
+			this.memberCode = memberCode;
+			this.studentNumber = studentNumber;
+			FirstName = firstName;
+			MiddleName = middleName;
+			LastName = lastName;
+			Course = course;
+			SectionAndYear = sectionAndYear;
+			Email = email;
+			PhoneNumber = phoneNumber;
+			DateJoined = dateJoined;
 		}
 		
-		public void setStudentID(long studentID) {
-			StudentID = studentID;
+		public String getMemberCode() {
+			return memberCode;
+		}
+		
+		public void setMemberCode(String memberCode) {
+			this.memberCode = memberCode;
+		}
+		
+		public long getStudentNumber() {
+			return studentNumber;
+		}
+		
+		public void setStudentNumber(long studentNumber) {
+			this.studentNumber = studentNumber;
 		}
 		
 		public String getFirstName() {
@@ -97,9 +122,4 @@ public class Member {
 		public void setDateJoined(String dateJoined) {
 			DateJoined = dateJoined;
 		}
-		
-		
-	
-	
 }
-

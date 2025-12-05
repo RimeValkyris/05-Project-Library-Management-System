@@ -8,7 +8,7 @@ public class BorrowTransaction extends Transaction {
 
     public BorrowTransaction(String memberId, String itemId, int borrowDays) {
         super(
-            "borrow-" + System.currentTimeMillis(),
+            TransactionIdGenerator.nextId(),
             memberId,
             itemId,
             LocalDate.now(),

@@ -10,10 +10,15 @@ public class BookManager {
     private List<Transaction> transactions = new ArrayList<>();
 
     private BookManager() {
-        // Add initial books
-        books.add(new Book("978-0156012195", "The Little Prince", "Antoine de Saint-Exupéry", "Children's Literature", "Reynal & Hitchcock", 1943));
-        books.add(new Book("978-0141439760", "Alice's Adventures in Wonderland", "Lewis Carroll", "Fantasy", "Macmillan", 1865));
-        books.add(new Book("978-0451524935", "1984", "George Orwell", "Dystopian Fiction", "Secker & Warburg", 1949));
+        // Add sample books
+        Book b1 = new Book("978-0-14-118280-3", "A Long Long Way", "Sebastian Barry", "Historical Fiction", "Faber & Faber", 2005);
+        addBook(b1);
+        Book b2 = new Book("978-0-19-921902-1", "Paradise Regained", "John Milton", "Poetry", "Oxford University Press", 1671);
+        addBook(b2);
+        Book b3 = new Book("978-0-14-042439-3", "Paradise Lost", "John Milton", "Poetry", "Penguin Classics", 1667);
+        addBook(b3);
+        Book b4 = new Book("978-0-345-34729-2", "The Guns of August", "Barbara Tuchman", "History", "Random House", 1962);
+        addBook(b4);
     }
 
     public void addBook(Book b) {
@@ -87,5 +92,10 @@ public class BookManager {
 
     public void addTransaction(Transaction t) {
         transactions.add(t);
+    }
+
+    // Remove a transaction from the central list (safe removal API)
+    public boolean removeTransaction(Transaction t) {
+        return transactions.remove(t);
     }
 }

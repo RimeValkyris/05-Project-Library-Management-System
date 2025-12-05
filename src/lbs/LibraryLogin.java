@@ -37,9 +37,6 @@ public class LibraryLogin extends JFrame {
 
 	private User adminUser;
 
-	/**
-	 * Launches the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -174,6 +171,7 @@ public class LibraryLogin extends JFrame {
 		
 		
 		btnNewButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Get user input
 				String username = textField.getText().trim();

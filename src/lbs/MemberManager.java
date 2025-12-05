@@ -9,10 +9,12 @@ public class MemberManager {
     private List<Member> members = new ArrayList<>();
 
     private MemberManager() {
-        // Add initial members
-        members.add(new Member(12345L, "John", "A.", "Doe", "Computer Science", "A-2023", "john.doe@example.com", 1234567890L, "2023-01-01"));
-        members.add(new Member(67890L, "Jane", "B.", "Smith", "Information Technology", "B-2023", "jane.smith@example.com", 9876543210L, "2023-02-15"));
-        members.add(new Member(54321L, "Bob", "C.", "Johnson", "Software Engineering", "C-2023", "bob.johnson@example.com", 5551234567L, "2023-03-10"));
+        // Add sample members
+        addMember(new Member(123456, "John", "A", "Doe", "Computer Science", "1A", "john.doe@example.com", 1234567890L, "2023-01-01"));
+        addMember(new Member(234567, "Jane", "B", "Smith", "Mathematics", "2B", "jane.smith@example.com", 2345678901L, "2023-02-01"));
+        addMember(new Member(345678, "Alice", "C", "Johnson", "Physics", "3C", "alice.johnson@example.com", 3456789012L, "2023-03-01"));
+        addMember(new Member(456789, "Bob", "D", "Williams", "Chemistry", "4D", "bob.williams@example.com", 4567890123L, "2023-04-01"));
+        addMember(new Member(567890, "Charlie", "E", "Brown", "Biology", "5E", "charlie.brown@example.com", 5678901234L, "2023-05-01"));
     }
 
     public void addMember(Member m) {

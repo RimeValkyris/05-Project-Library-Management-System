@@ -1,24 +1,23 @@
 package lbs;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.Color;
-import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JOptionPane;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class ReturnTransactionUI extends JFrame implements ActionListener {
 
@@ -48,7 +47,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
     public ReturnTransactionUI() {
         initializeBusinessLogic();
         initializeUI();
-        loadSampleData(); // Load some sample data for demonstration
+        // No sample data on startup
         updateStatistics();
     }
     
@@ -68,6 +67,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 1165, 690);
         contentPane = new JPanel();
+        setResizable(false);
         contentPane.setBackground(new Color(255, 255, 255));
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
@@ -78,6 +78,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         createMainContent();
         createStatisticsPanel();
         createTablePanel();
+        loadBorrowedBooks();
     }
     
     /**
@@ -88,6 +89,11 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         header.setBackground(new Color(79, 70, 229));
         header.setBounds(0, 0, 1149, 49);
         contentPane.add(header);
+        
+        JLabel lblNewLabel_5 = new JLabel("Library Management System");
+        lblNewLabel_5.setForeground(Color.WHITE);
+        lblNewLabel_5.setFont(new Font("Oswald", Font.BOLD, 24));
+        header.add(lblNewLabel_5);
     }
     
     /**
@@ -98,6 +104,13 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         footer.setBackground(new Color(79, 70, 229));
         footer.setBounds(0, 610, 1190, 49);
         contentPane.add(footer);
+        footer.setLayout(null);
+        
+        JLabel lblNewLabel_5_1 = new JLabel("University of Ruina");
+        lblNewLabel_5_1.setBounds(982, 0, 155, 44);
+        lblNewLabel_5_1.setForeground(Color.WHITE);
+        lblNewLabel_5_1.setFont(new Font("Oswald", Font.BOLD, 21));
+        footer.add(lblNewLabel_5_1);
     }
     
     /**
@@ -182,7 +195,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         contentPane.add(totalIssuedPanel);
         totalIssuedPanel.setLayout(null);
         
-        lblTotalIssued = new JLabel("2");
+        lblTotalIssued = new JLabel("0");
         lblTotalIssued.setBounds(65, 20, 30, 30);
         lblTotalIssued.setFont(new Font("Tahoma", Font.BOLD, 24));
         lblTotalIssued.setForeground(Color.WHITE);
@@ -201,7 +214,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         contentPane.add(activePanel);
         activePanel.setLayout(null);
         
-        lblActive = new JLabel("2");
+        lblActive = new JLabel("0");
         lblActive.setBounds(65, 20, 30, 30);
         lblActive.setFont(new Font("Tahoma", Font.BOLD, 24));
         lblActive.setForeground(Color.WHITE);
@@ -256,23 +269,6 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
     }
     
     /**
-     * Load sample data for demonstration
-     */
-    private void loadSampleData() {
-        // Add sample borrowed books that can be returned
-        addSampleTransaction("TRN001", "Tristes Tropiques", "Ignaz Semmelweis", "MEM001", "2025-10-15", "2025-11-20", "Active");
-        addSampleTransaction("TRN002", "A Long Long Way", "Juan Dela Cruz", "MEM002", "2025-11-20", "2025-11-25", "Active");
-    }
-    
-    /**
-     * Add sample transaction to table
-     */
-    private void addSampleTransaction(String transId, String bookTitle, String memberName, String memberId, String issueDate, String dueDate, String status) {
-        Object[] rowData = {transId, bookTitle, memberName, memberId, issueDate, dueDate, status, "Return"};
-        tableModel.addRow(rowData);
-    }
-    
-    /**
      * Update statistics display
      */
     private void updateStatistics() {
@@ -324,30 +320,88 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
     private void processReturnTransaction() {
         String memberId = txtMemberId.getText().trim();
         String transactionId = txtBookId.getText().trim();
-        
+
         // Validation
         if (!validateInput(memberId, transactionId)) {
             return;
         }
-        
+
         try {
-            // Create return transaction using OOP principles
-            TransactionReturn returnTransaction = new TransactionReturn(memberId, transactionId);
-            
-            // Process the transaction
+            // Find the original borrow transaction in the central manager
+            Transaction originalBorrow = null;
+            for (Transaction t : BookManager.instance.getTransactions()) {
+                if (t != null && transactionId.equals(t.getTransactionId()) && "borrow".equalsIgnoreCase(t.getType())) {
+                    originalBorrow = t;
+                    break;
+                }
+            }
+
+            if (originalBorrow == null) {
+                JOptionPane.showMessageDialog(this, "Borrow transaction not found: " + transactionId,
+                                              "Not Found", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Determine item id (ISBN) from the original borrow transaction
+            String itemId = originalBorrow.getItemId();
+
+            // Update book status to available
+            Book book = BookManager.instance.findBookByISBN(itemId);
+            if (book != null) {
+                book.returnItem();
+            }
+
+            // Calculate late fee (if any)
+            double lateFee = 0.0;
+            if (originalBorrow.getDueDate() != null) {
+                LocalDate today = LocalDate.now();
+                if (today.isAfter(originalBorrow.getDueDate())) {
+                    long daysLate = java.time.temporal.ChronoUnit.DAYS.between(originalBorrow.getDueDate(), today);
+                    lateFee = daysLate * 2.0;
+                }
+            }
+
+            // Generate a return transaction id prefixed by memberId
+            // Use centralized TRN### generator so IDs are like TRN001, TRN002, ...
+            String returnTransId = TransactionIdGenerator.nextId();
+
+            // Create return transaction (use the full constructor to preserve details)
+            TransactionReturn returnTransaction = new TransactionReturn(
+                    returnTransId,
+                    memberId,
+                    itemId,
+                    originalBorrow.getTransactionDate(),
+                    LocalDate.now(),
+                    lateFee,
+                    "COMPLETED",
+                    ""
+            );
+
+            // Process the transaction (business logic hook)
             returnTransaction.processTransaction();
-            
-            // Add to our collection
+
+            // Add to central manager so other UIs (like BorrowTransactionUI) can see it
+            BookManager.instance.addTransaction(returnTransaction);
+
+            // Add to our local collection for the returns UI
             returnTransactions.add(returnTransaction);
-            
+
+            // Also remove the original borrow transaction from manager if you want it considered returned
+            // (optional): remove the borrow transaction so it no longer appears as active
+            // We'll remove it from BookManager transactions list
+            BookManager.instance.removeTransaction(originalBorrow);
+
+            // Refresh the borrow UI if it's open so tables reflect the change
+            BorrowTransactionUI.refreshIfOpen();
+
             // Update UI
             removeReturnedBookFromTable(memberId, transactionId);
             clearInputFields();
             updateStatistics();
-            
+
             // Show detailed success message in GUI
             showTransactionResult(returnTransaction);
-            
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error processing return: " + ex.getMessage(), 
                                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -468,5 +522,45 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
      */
     public int getTransactionCount() {
         return returnTransactions.size();
+    }
+    
+    /**
+     * Load borrowed books into the table
+     */
+    private void loadBorrowedBooks() {
+        tableModel.setRowCount(0); // Clear table
+        
+        for (Transaction t : BookManager.instance.getTransactions()) {
+            if (t != null && "borrow".equalsIgnoreCase(t.getType())) {
+                Book b = BookManager.instance.findBookByISBN(t.getItemId());
+                if (b != null && !b.isAvailable()) {
+                    // Find member name
+                    String memberName = "Unknown";
+                    for (Member m : MemberManager.instance.getMembers()) {
+                        if (m.getMemberCode().equals(t.getMemberId())) {
+                            memberName = m.getFirstName() + " " + m.getLastName();
+                            break;
+                        }
+                    }
+                    
+                    // Determine status
+                    String status = "Active";
+                    if (t.getDueDate() != null && LocalDate.now().isAfter(t.getDueDate())) {
+                        status = "Overdue";
+                    }
+                    
+                    tableModel.addRow(new Object[]{
+                        t.getTransactionId(),
+                        b.getTitle(),
+                        memberName,
+                        t.getMemberId(),
+                        t.getTransactionDate().toString(),
+                        t.getDueDate() != null ? t.getDueDate().toString() : "N/A",
+                        status,
+                        "Return" // Action column
+                    });
+                }
+            }
+        }
     }
 }

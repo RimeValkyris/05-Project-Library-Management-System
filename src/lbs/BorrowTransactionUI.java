@@ -9,17 +9,23 @@ import javax.swing.table.DefaultTableModel;
 public class BorrowTransactionUI extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    private static BorrowTransactionUI currentInstance; // last opened instance for refresh
+
     private JPanel contentPane;
-    private JTextField studentIdField;
+    private JTextField memberIdField;
     private JTextField isbnField;
     private JTextField titleField;
     private JTextField todayField;
     private JTextField daysField;
-    private DefaultTableModel model;
+    private DefaultTableModel model; // borrowed table model
+    private DefaultTableModel returnModel; // returns table model
 
     public BorrowTransactionUI() {
+        currentInstance = this;
+
         setTitle("Library Borrow Transaction");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
         setSize(1200, 700);
         setLocationRelativeTo(null);
         contentPane = new JPanel();
@@ -32,6 +38,11 @@ public class BorrowTransactionUI extends JFrame {
         header.setBackground(new Color(79, 70, 229));
         header.setBounds(0, 0, 1190, 49);
         contentPane.add(header);
+        
+        JLabel lblNewLabel_5 = new JLabel("Library Management System");
+        lblNewLabel_5.setForeground(Color.WHITE);
+        lblNewLabel_5.setFont(new Font("Oswald", Font.BOLD, 25));
+        header.add(lblNewLabel_5);
 
         // Left panel
         JPanel leftPanel = new JPanel();
@@ -46,15 +57,16 @@ public class BorrowTransactionUI extends JFrame {
         lblTitle.setBounds(27, 31, 250, 38);
         leftPanel.add(lblTitle);
 
-        JLabel lblStudent = new JLabel("Student ID");
+        JLabel lblStudent = new JLabel("Member ID");
         lblStudent.setForeground(Color.WHITE);
         lblStudent.setFont(new Font("Tahoma", Font.PLAIN, 16));
         lblStudent.setBounds(27, 88, 115, 20);
         leftPanel.add(lblStudent);
 
-        studentIdField = new JTextField();
-        studentIdField.setBounds(27, 113, 327, 25);
-        leftPanel.add(studentIdField);
+        // Member ID field
+        memberIdField = new JTextField();
+        memberIdField.setBounds(27, 113, 327, 25);
+        leftPanel.add(memberIdField);
 
         JLabel lblIsbn = new JLabel("ISBN");
         lblIsbn.setForeground(Color.WHITE);
@@ -130,7 +142,8 @@ public class BorrowTransactionUI extends JFrame {
         lblBorrowed.setBounds(10, 10, 200, 30);
         borrowedPanel.add(lblBorrowed);
 
-        String[] columnNames = {"Title", "ISBN", "Student ID", "Issue Date", "Due Date"};
+        // Include Transaction ID so users can reference it in the Return screen
+        String[] columnNames = {"Transaction ID", "Title", "ISBN", "Member ID", "Issue Date", "Due Date"};
         model = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -148,7 +161,7 @@ public class BorrowTransactionUI extends JFrame {
         lblMembers.setBounds(10, 10, 200, 30);
         membersPanel.add(lblMembers);
 
-        String[] memberColumns = {"Student ID", "First Name", "Last Name", "Email", "Phone"};
+        String[] memberColumns = {"Member ID", "First Name", "Last Name", "Email", "Phone"};
         DefaultTableModel memberModel = new DefaultTableModel(memberColumns, 0);
         JTable memberTable = new JTable(memberModel);
         JScrollPane memberScroll = new JScrollPane(memberTable);
@@ -156,9 +169,9 @@ public class BorrowTransactionUI extends JFrame {
         membersPanel.add(memberScroll);
 
         // Populate members
-        for (Member m : MemberManagement.members) {
+        for (Member m : MemberManager.instance.getMembers()) {
             memberModel.addRow(new Object[]{
-                String.valueOf(m.getStudentID()),
+                m.getMemberCode(),
                 m.getFirstName(),
                 m.getLastName(),
                 m.getEmail(),
@@ -198,6 +211,29 @@ public class BorrowTransactionUI extends JFrame {
 
         tabbedPane.addTab("Books", booksPanel);
 
+        // Tab 4: Return Books - display borrowed books for returning
+        JPanel returnsPanel = new JPanel();
+        returnsPanel.setLayout(null);
+
+        JLabel lblReturns = new JLabel("Return Books");
+        lblReturns.setFont(new Font("Tahoma", Font.BOLD, 20));
+        lblReturns.setBounds(10, 10, 200, 30);
+        returnsPanel.add(lblReturns);
+
+        String[] returnColumns = {"Transaction ID", "Title", "ISBN", "Member ID", "Issue Date", "Due Date"};
+        returnModel = new DefaultTableModel(returnColumns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        JTable returnTable = new JTable(returnModel);
+        JScrollPane returnScroll = new JScrollPane(returnTable);
+        returnScroll.setBounds(10, 50, 700, 380);
+        returnsPanel.add(returnScroll);
+
+        tabbedPane.addTab("Return Books", returnsPanel);
+
         // Button Actions
         btnIssue.addActionListener(e -> issueBook());
         btnBack.addActionListener(e -> {
@@ -210,13 +246,70 @@ public class BorrowTransactionUI extends JFrame {
         footer.setBackground(new Color(79, 70, 229));
         footer.setBounds(0, 612, 1190, 49);
         contentPane.add(footer);
+        footer.setLayout(null);
+        
+        JLabel lblNewLabel_5_1 = new JLabel("University of Ruina");
+        lblNewLabel_5_1.setBounds(1025, 11, 155, 33);
+        lblNewLabel_5_1.setForeground(Color.WHITE);
+        lblNewLabel_5_1.setFont(new Font("Oswald", Font.BOLD, 21));
+        footer.add(lblNewLabel_5_1);
+
+        // Load transactions into tables
+        loadTransactionsIntoTables();
+    }
+
+    // Load/refresh transactions into both Borrowed and Returns tables
+    private void loadTransactionsIntoTables() {
+        // Clear current models
+        model.setRowCount(0);
+        if (returnModel != null) {
+            returnModel.setRowCount(0);
+        }
+
+        // Diagnostic output to help debug why tables may be empty
+        System.out.println("[DEBUG] BookManager transactions count: " + BookManager.instance.getTransactions().size());
+
+        for (Transaction t : BookManager.instance.getTransactions()) {
+            if (t == null) continue;
+            System.out.println("[DEBUG] Transaction: id=" + t.getTransactionId() + ", type=" + t.getType() + ", itemId=" + t.getItemId() + ", memberId=" + t.getMemberId());
+            if ("borrow".equalsIgnoreCase(t.getType())) {
+                Book b = BookManager.instance.findBookByISBN(t.getItemId());
+                // Only list it if the book exists and is currently checked out (not available)
+                if (b != null && !b.isAvailable()) {
+                    Object[] row = new Object[] {
+                        t.getTransactionId(),
+                        b.getTitle(),
+                        t.getItemId(),
+                        t.getMemberId(),
+                        t.getTransactionDate(),
+                        t.getDueDate()
+                    };
+                    model.addRow(row);
+                    returnModel.addRow(row);
+                }
+            }
+        }
+    }
+
+// Allow other UIs to trigger a refresh if the BorrowTransactionUI is open
+    public static void refreshIfOpen() {
+        if (currentInstance != null) {
+            currentInstance.loadTransactionsIntoTables();
+        }
+    }
+
+    // Allow other UIs to refresh the members dropdown if this UI is open
+    public static void refreshMembersIfOpen() {
+        if (currentInstance != null && currentInstance.memberIdField != null) {
+            currentInstance.memberIdField.setText("");
+        }
     }
 
     /**
      * Handles issuing of a new book.
      */
     private void issueBook() {
-        String studentId = studentIdField.getText().trim();
+        String memberCode = memberIdField.getText().trim();
         String isbn = isbnField.getText().trim();
         String title = titleField.getText().trim();
 
@@ -230,26 +323,19 @@ public class BorrowTransactionUI extends JFrame {
             }
 
             // Create BorrowTransaction object
-            BorrowTransaction transaction = new BorrowTransaction(studentId, isbn, days);
+            BorrowTransaction transaction = new BorrowTransaction(memberCode, isbn, days);
             transaction.processTransaction();
 
             // Add transaction to manager
             BookManager.instance.addTransaction(transaction);
             book.checkOut();
 
-            // Add row to table
-            model.addRow(new Object[]{
-                title.isEmpty() ? book.getTitle() : title,
-                isbn,
-                studentId,
-                transaction.getTransactionDate(),
-                transaction.getDueDate()
-            });
+            // Refresh tables so all tabs show updated information
+            loadTransactionsIntoTables();
 
             JOptionPane.showMessageDialog(this, "Book issued successfully!");
 
             // Reset fields
-            studentIdField.setText("");
             isbnField.setText("");
             titleField.setText("");
             todayField.setText(LocalDate.now().toString());
@@ -262,7 +348,5 @@ public class BorrowTransactionUI extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> new BorrowTransactionUI().setVisible(true));
-    }
+    
 }

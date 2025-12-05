@@ -22,11 +22,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 import javax.swing.JOptionPane;
 
+// Added imports for today's date default
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class MemberManagement extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField textField; // student number input
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
@@ -66,6 +70,11 @@ public class MemberManagement extends JFrame {
 		panel_1_1_1.setBounds(0, 0, 1557, 49);
 		contentPane.add(panel_1_1_1);
 		
+		JLabel lblNewLabel_5_1 = new JLabel("Library Management System");
+		lblNewLabel_5_1.setForeground(Color.WHITE);
+		lblNewLabel_5_1.setFont(new Font("Oswald", Font.BOLD, 25));
+		panel_1_1_1.add(lblNewLabel_5_1);
+		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
 		panel_1.setBackground(new Color(30, 41, 59));
@@ -89,6 +98,7 @@ public class MemberManagement extends JFrame {
 		lblNewLabel.setBounds(30, 22, 269, 29);
 		panel_1.add(lblNewLabel);
 		
+		// Change the label text to Student Number (input remains student number)
 		JLabel lblNewLabel_1 = new JLabel("Student Number");
 		lblNewLabel_1.setForeground(Color.WHITE);
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -187,7 +197,11 @@ public class MemberManagement extends JFrame {
 		textField_8.setBounds(10, 420, 128, 20);
 		panel_1.add(textField_8);
 		textField_8.setColumns(10);
-		
+		// Set default Date Joined to today's date (ISO format). Keep formatter final so inner classes can use it.
+		final DateTimeFormatter __dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		final String __today = LocalDate.now().format(__dateFmt);
+		textField_8.setText(__today);
+
 		JButton btnAdd = new JButton("Add");
 		btnAdd.setOpaque(true);
 		btnAdd.setForeground(Color.WHITE);
@@ -236,6 +250,13 @@ public class MemberManagement extends JFrame {
 		panel_1_1.setBackground(new Color(79, 70, 229));
 		panel_1_1.setBounds(0, 668, 1557, 49);
 		contentPane.add(panel_1_1);
+		panel_1_1.setLayout(null);
+		
+		JLabel lblNewLabel_5_1_1 = new JLabel("University of Ruina");
+		lblNewLabel_5_1_1.setBounds(1380, 11, 155, 33);
+		lblNewLabel_5_1_1.setForeground(Color.WHITE);
+		lblNewLabel_5_1_1.setFont(new Font("Oswald", Font.BOLD, 21));
+		panel_1_1.add(lblNewLabel_5_1_1);
 		
 		JLabel lblNewLabel_10 = new JLabel("Library Member Table");
 		lblNewLabel_10.setForeground(Color.BLACK);
@@ -262,6 +283,8 @@ public class MemberManagement extends JFrame {
 		contentPane.add(scrollPane);
 		
 		DefaultTableModel model = new DefaultTableModel();
+		// Include Member ID (auto generated) and Student Number; input remains Student Number
+		model.addColumn("Member ID");
 		model.addColumn("Student Number");
 		model.addColumn("First Name");
 		model.addColumn("Middle Name");
@@ -272,20 +295,13 @@ public class MemberManagement extends JFrame {
 		model.addColumn("Phone Number");
 		model.addColumn("Date Joined");
 		table.setModel(model);
-		
-		// Add sample data for 3 students
-		Member member1 = new Member(12345L, "John", "A.", "Doe", "Computer Science", "A-2023", "john.doe@example.com", 1234567890L, "2023-01-01");
-		members.add(member1);
-		model.addRow(new Object[]{member1.getStudentID(), member1.getFirstName(), member1.getMiddleName(), member1.getLastName(), member1.getCourse(), member1.getSectionAndYear(), member1.getEmail(), member1.getPhoneNumber(), member1.getDateJoined()});
-		
-		Member member2 = new Member(67890L, "Jane", "B.", "Smith", "Information Technology", "B-2023", "jane.smith@example.com", 9876543210L, "2023-02-15");
-		members.add(member2);
-		model.addRow(new Object[]{member2.getStudentID(), member2.getFirstName(), member2.getMiddleName(), member2.getLastName(), member2.getCourse(), member2.getSectionAndYear(), member2.getEmail(), member2.getPhoneNumber(), member2.getDateJoined()});
-		
-		Member member3 = new Member(54321L, "Bob", "C.", "Johnson", "Software Engineering", "C-2023", "bob.johnson@example.com", 5551234567L, "2023-03-10");
-		members.add(member3);
-		model.addRow(new Object[]{member3.getStudentID(), member3.getFirstName(), member3.getMiddleName(), member3.getLastName(), member3.getCourse(), member3.getSectionAndYear(), member3.getEmail(), member3.getPhoneNumber(), member3.getDateJoined()});
-		
+
+		// Load sample members from MemberManager
+		for (Member m : MemberManager.instance.getMembers()) {
+			members.add(m);
+			model.addRow(new Object[]{m.getMemberCode(), m.getStudentNumber(), m.getFirstName(), m.getMiddleName(), m.getLastName(), m.getCourse(), m.getSectionAndYear(), m.getEmail(), m.getPhoneNumber(), m.getDateJoined()});
+		}
+
 		btnAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -298,12 +314,16 @@ public class MemberManagement extends JFrame {
 					String sectionAndYear = textField_5.getText();
 					String email = textField_6.getText();
 					long phoneNumber = Long.parseLong(textField_7.getText());
-					String dateJoined = textField_8.getText();
+					String dateJoined = textField_8.getText().trim();
+					if (dateJoined.isEmpty()) {
+						dateJoined = LocalDate.now().format(__dateFmt);
+					}
 					
 					Member member = new Member(studentID, firstName, middleName, lastName, course, sectionAndYear, email, phoneNumber, dateJoined);
 					members.add(member);
 					
-					model.addRow(new Object[]{studentID, firstName, middleName, lastName, course, sectionAndYear, email, phoneNumber, dateJoined});
+					// Add row: use auto-generated memberCode and keep student number visible
+					model.addRow(new Object[]{member.getMemberCode(), member.getStudentNumber(), firstName, middleName, lastName, course, sectionAndYear, email, phoneNumber, dateJoined});
 					
 					// Clear the input fields after adding
 					textField.setText("");
@@ -314,7 +334,8 @@ public class MemberManagement extends JFrame {
 					textField_5.setText("");
 					textField_6.setText("");
 					textField_7.setText("");
-					textField_8.setText("");
+					// reset Date Joined to today's date by default
+					textField_8.setText(__today);
 				} catch (NumberFormatException ex) {
 					// Handle invalid input, e.g., show error message
 					System.out.println("Invalid number format");
@@ -353,15 +374,16 @@ public class MemberManagement extends JFrame {
 					if (selectedRow != -1) {
 						JOptionPane.showMessageDialog(null, "Edit the member detail and click update to confirm changes");
 						// Populate fields with selected row data
-						textField.setText(model.getValueAt(selectedRow, 0).toString());
-						textField_1.setText(model.getValueAt(selectedRow, 1).toString());
-						textField_2.setText(model.getValueAt(selectedRow, 2).toString());
-						textField_3.setText(model.getValueAt(selectedRow, 3).toString());
-						textField_4.setText(model.getValueAt(selectedRow, 4).toString());
-						textField_5.setText(model.getValueAt(selectedRow, 5).toString());
-						textField_6.setText(model.getValueAt(selectedRow, 6).toString());
-						textField_7.setText(model.getValueAt(selectedRow, 7).toString());
-						textField_8.setText(model.getValueAt(selectedRow, 8).toString());
+						// Student Number is at column 1 now; Member Code at column 0
+						textField.setText(model.getValueAt(selectedRow, 1).toString());
+						textField_1.setText(model.getValueAt(selectedRow, 2).toString());
+						textField_2.setText(model.getValueAt(selectedRow, 3).toString());
+						textField_3.setText(model.getValueAt(selectedRow, 4).toString());
+						textField_4.setText(model.getValueAt(selectedRow, 5).toString());
+						textField_5.setText(model.getValueAt(selectedRow, 6).toString());
+						textField_6.setText(model.getValueAt(selectedRow, 7).toString());
+						textField_7.setText(model.getValueAt(selectedRow, 8).toString());
+						textField_8.setText(model.getValueAt(selectedRow, 9).toString());
 						isEditing = true;
 					}
 				} else {
@@ -380,7 +402,8 @@ public class MemberManagement extends JFrame {
 						if (result == JOptionPane.YES_OPTION) {
 							int selectedRow = table.getSelectedRow();
 							Member m = members.get(selectedRow);
-							m.setStudentID(studentID);
+							// Update student number and other properties; do NOT change auto-generated memberCode
+							m.setStudentNumber(studentID);
 							m.setFirstName(firstName);
 							m.setMiddleName(middleName);
 							m.setLastName(lastName);
@@ -390,15 +413,17 @@ public class MemberManagement extends JFrame {
 							m.setPhoneNumber(phoneNumber);
 							m.setDateJoined(dateJoined);
 							
-							model.setValueAt(studentID, selectedRow, 0);
-							model.setValueAt(firstName, selectedRow, 1);
-							model.setValueAt(middleName, selectedRow, 2);
-							model.setValueAt(lastName, selectedRow, 3);
-							model.setValueAt(course, selectedRow, 4);
-							model.setValueAt(sectionAndYear, selectedRow, 5);
-							model.setValueAt(email, selectedRow, 6);
-							model.setValueAt(phoneNumber, selectedRow, 7);
-							model.setValueAt(dateJoined, selectedRow, 8);
+							// Update table model (columns shifted by one due to Student Number column)
+							model.setValueAt(m.getMemberCode(), selectedRow, 0);
+							model.setValueAt(m.getStudentNumber(), selectedRow, 1);
+							model.setValueAt(firstName, selectedRow, 2);
+							model.setValueAt(middleName, selectedRow, 3);
+							model.setValueAt(lastName, selectedRow, 4);
+							model.setValueAt(course, selectedRow, 5);
+							model.setValueAt(sectionAndYear, selectedRow, 6);
+							model.setValueAt(email, selectedRow, 7);
+							model.setValueAt(phoneNumber, selectedRow, 8);
+							model.setValueAt(dateJoined, selectedRow, 9);
 						}
 					} catch (NumberFormatException ex) {
 						System.out.println("Invalid number format");
@@ -419,12 +444,13 @@ public class MemberManagement extends JFrame {
 						m.getLastName().toLowerCase().contains(searchText) ||
 						m.getCourse().toLowerCase().contains(searchText) ||
 						m.getEmail().toLowerCase().contains(searchText)) {
-						model.addRow(new Object[]{m.getStudentID(), m.getFirstName(), m.getMiddleName(), m.getLastName(), m.getCourse(), m.getSectionAndYear(), m.getEmail(), m.getPhoneNumber(), m.getDateJoined()});
+						model.addRow(new Object[]{m.getMemberCode(), m.getStudentNumber(), m.getFirstName(), m.getMiddleName(), m.getLastName(), m.getCourse(), m.getSectionAndYear(), m.getEmail(), m.getPhoneNumber(), m.getDateJoined()});
 					}
 				}
 			}
 		});
 		
+		// Clear button: clear fields and reset Date Joined to today
 		btnClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -436,8 +462,7 @@ public class MemberManagement extends JFrame {
 				textField_5.setText("");
 				textField_6.setText("");
 				textField_7.setText("");
-				textField_8.setText("");
-				isEditing = false;
+				textField_8.setText(__today);
 			}
 		});
 		
@@ -448,15 +473,15 @@ public class MemberManagement extends JFrame {
 					int selectedRow = table.getSelectedRow();
 					if (selectedRow != -1) {
 						// Populate fields with selected row data
-						textField.setText(model.getValueAt(selectedRow, 0).toString());
-						textField_1.setText(model.getValueAt(selectedRow, 1).toString());
-						textField_2.setText(model.getValueAt(selectedRow, 2).toString());
-						textField_3.setText(model.getValueAt(selectedRow, 3).toString());
-						textField_4.setText(model.getValueAt(selectedRow, 4).toString());
-						textField_5.setText(model.getValueAt(selectedRow, 5).toString());
-						textField_6.setText(model.getValueAt(selectedRow, 6).toString());
-						textField_7.setText(model.getValueAt(selectedRow, 7).toString());
-						textField_8.setText(model.getValueAt(selectedRow, 8).toString());
+						textField.setText(model.getValueAt(selectedRow, 1).toString());
+						textField_1.setText(model.getValueAt(selectedRow, 2).toString());
+						textField_2.setText(model.getValueAt(selectedRow, 3).toString());
+						textField_3.setText(model.getValueAt(selectedRow, 4).toString());
+						textField_4.setText(model.getValueAt(selectedRow, 5).toString());
+						textField_5.setText(model.getValueAt(selectedRow, 6).toString());
+						textField_6.setText(model.getValueAt(selectedRow, 7).toString());
+						textField_7.setText(model.getValueAt(selectedRow, 8).toString());
+						textField_8.setText(model.getValueAt(selectedRow, 9).toString());
 					}
 				}
 			}

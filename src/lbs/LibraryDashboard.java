@@ -15,10 +15,21 @@ import javax.swing.ImageIcon;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
-import java.awt.BasicStroke; // added for optional border
-import java.awt.geom.RoundRectangle2D; // added for rounded corners
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+// Added imports for improved table design
+import java.awt.Component;
+import java.awt.Dimension;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableRowSorter;
+import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
 
 public class LibraryDashboard extends JFrame {
 
@@ -29,7 +40,6 @@ public class LibraryDashboard extends JFrame {
 	private int totalBooks;
 	private int issuedBooks;
 	private int members;
-	
 	
 	
 	private JLabel lblTotalBooksCount;
@@ -214,12 +224,11 @@ public class LibraryDashboard extends JFrame {
 		panel_1.setBounds(0, 0, 1271, 49);
 		panel_1.setBackground(new Color(79, 70, 229));
 		contentPane.add(panel_1);
-		panel_1.setLayout(null);
+		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JLabel lblNewLabel_5 = new JLabel("Library Management System");
 		lblNewLabel_5.setForeground(new Color(255, 255, 255));
 		lblNewLabel_5.setFont(new Font("Oswald", Font.BOLD, 25));
-		lblNewLabel_5.setBounds(10, 11, 402, 27);
 		panel_1.add(lblNewLabel_5);
 		
 		JPanel panel_1_1 = new JPanel();
@@ -269,23 +278,11 @@ public class LibraryDashboard extends JFrame {
 					g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 					g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					// rounded clip and background
-					float arc = 24f; // corner radius
-					RoundRectangle2D.Float round = new RoundRectangle2D.Float(0, 0, bannerW, bannerH, arc, arc);
-					// fill rounded background
+					// fill plain background (no rounded corners)
 					g2.setColor(Color.WHITE);
-					g2.fill(round);
-					// set clip to rounded area so image is drawn with smooth rounded corners
-					java.awt.Shape oldClip = g2.getClip();
-					g2.setClip(round);
-					// draw scaled image (may be larger than canvas so it crops automatically)
+					g2.fillRect(0, 0, bannerW, bannerH);
+					// draw scaled image (no clipping to rounded shape)
 					g2.drawImage(srcImg, x, y, destW, destH, null);
-					// restore clip
-					g2.setClip(oldClip);
-					// optional subtle border around rounded image
-					g2.setStroke(new BasicStroke(1.5f));
-					g2.setColor(new Color(200, 200, 200, 180));
-					g2.draw(round);
 				} finally {
 					g2.dispose();
 				}
@@ -363,6 +360,132 @@ public class LibraryDashboard extends JFrame {
 		contentPane.revalidate();
 		contentPane.repaint();
 
+		// Add Books Table
+		JLabel lblBooks = new JLabel("Books List");
+		lblBooks.setFont(new Font("SansSerif", Font.BOLD, 16));
+		lblBooks.setBounds(315, 400, 100, 20);
+		contentPane.add(lblBooks);
+
+		String[] bookColumns = {"Title", "Author", "Genre", "Year"};
+		// Non-editable model for books
+		DefaultTableModel bookModel = new DefaultTableModel(bookColumns, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		JTable bookTable = new JTable(bookModel);
+		bookTable.setRowHeight(28);
+		bookTable.setFillsViewportHeight(true);
+		bookTable.setShowGrid(false);
+		bookTable.setIntercellSpacing(new Dimension(6, 6));
+		bookTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		bookTable.setAutoCreateRowSorter(true);
+		// Header styling
+		JTableHeader bookHeader = bookTable.getTableHeader();
+		bookHeader.setReorderingAllowed(false);
+		bookHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		bookHeader.setBackground(new Color(245, 245, 245));
+		// Alternate row stripe renderer
+		DefaultTableCellRenderer stripeRenderer = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if (!isSelected) {
+					c.setBackground((row % 2 == 0) ? Color.WHITE : new Color(250, 250, 252));
+				}
+				// center years
+				if (column == 3) {
+					setHorizontalAlignment(SwingConstants.CENTER);
+				} else {
+					setHorizontalAlignment(SwingConstants.LEFT);
+				}
+				return c;
+			}
+		};
+		bookTable.setDefaultRenderer(Object.class, stripeRenderer);
+		// column widths
+		bookTable.getColumnModel().getColumn(0).setPreferredWidth(240); // Title
+		bookTable.getColumnModel().getColumn(1).setPreferredWidth(160); // Author
+		bookTable.getColumnModel().getColumn(2).setPreferredWidth(120); // Genre
+		bookTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Year
+
+		JScrollPane bookScroll = new JScrollPane(bookTable);
+		bookScroll.setBounds(315, 420, 450, 200);
+		contentPane.add(bookScroll);
+
+		// Populate books
+		for (Book b : BookManager.instance.getBooks()) {
+			bookModel.addRow(new Object[]{
+				b.getTitle(),
+				b.getAuthor(),
+				b.getGenre(),
+				String.valueOf(b.getYear())
+			});
+		}
+
+		// Add Members Table
+		JLabel lblMembersTable = new JLabel("Members List");
+		lblMembersTable.setFont(new Font("SansSerif", Font.BOLD, 16));
+		lblMembersTable.setBounds(780, 400, 120, 20);
+		contentPane.add(lblMembersTable);
+
+		String[] memberColumns = {"Member ID", "First Name", "Last Name", "Email"};
+		// Non-editable model for members
+		DefaultTableModel memberModel = new DefaultTableModel(memberColumns, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		JTable memberTable = new JTable(memberModel);
+		memberTable.setRowHeight(28);
+		memberTable.setFillsViewportHeight(true);
+		memberTable.setShowGrid(false);
+		memberTable.setIntercellSpacing(new Dimension(6, 6));
+		memberTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		memberTable.setAutoCreateRowSorter(true);
+		JTableHeader memHeader = memberTable.getTableHeader();
+		memHeader.setReorderingAllowed(false);
+		memHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		memHeader.setBackground(new Color(245, 245, 245));
+		// reuse stripe renderer from above but align first column center
+		DefaultTableCellRenderer memRenderer = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if (!isSelected) {
+					c.setBackground((row % 2 == 0) ? Color.WHITE : new Color(250, 250, 252));
+				}
+				// center ID column
+				if (column == 0) {
+					setHorizontalAlignment(SwingConstants.CENTER);
+				} else {
+					setHorizontalAlignment(SwingConstants.LEFT);
+				}
+				return c;
+			}
+		};
+		memberTable.setDefaultRenderer(Object.class, memRenderer);
+		// column widths
+		memberTable.getColumnModel().getColumn(0).setPreferredWidth(90); // ID
+		memberTable.getColumnModel().getColumn(1).setPreferredWidth(140); // First
+		memberTable.getColumnModel().getColumn(2).setPreferredWidth(140); // Last
+		memberTable.getColumnModel().getColumn(3).setPreferredWidth(220); // Email
+
+		JScrollPane memberScroll = new JScrollPane(memberTable);
+		memberScroll.setBounds(780, 420, 450, 200);
+		contentPane.add(memberScroll);
+
+		// Populate members
+		for (Member m : MemberManager.instance.getMembers()) {
+			memberModel.addRow(new Object[]{
+				m.getMemberCode(),
+				m.getFirstName(),
+				m.getLastName(),
+				m.getEmail()
+			});
+		}
 	}
 	
 	public void updateStatistics() {

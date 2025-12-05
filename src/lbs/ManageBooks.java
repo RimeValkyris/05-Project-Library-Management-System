@@ -1,21 +1,20 @@
 package lbs;
 
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.Color;
-import javax.swing.JButton;
 import java.awt.Cursor;
 import java.awt.Font;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class ManageBooks extends JFrame {
 
@@ -48,6 +47,7 @@ public class ManageBooks extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(1287, 756);
 		setLocationRelativeTo(null);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -134,8 +134,8 @@ public class ManageBooks extends JFrame {
 		
 		JLabel lblNewLabel = new JLabel("Book Details");
 		lblNewLabel.setForeground(new Color(255, 255, 255));
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblNewLabel.setBounds(30, 67, 131, 14);
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 24));
+		lblNewLabel.setBounds(30, 49, 219, 38);
 		panel_1.add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("ISBN");
@@ -446,11 +446,23 @@ public class ManageBooks extends JFrame {
 		panel_1_1.setBackground(new Color(79, 70, 229));
 		panel_1_1.setBounds(0, 668, 1271, 49);
 		contentPane.add(panel_1_1);
+		panel_1_1.setLayout(null);
+		
+		JLabel lblNewLabel_5_1 = new JLabel("University of Ruina");
+		lblNewLabel_5_1.setBounds(1106, 11, 155, 33);
+		lblNewLabel_5_1.setForeground(Color.WHITE);
+		lblNewLabel_5_1.setFont(new Font("Oswald", Font.BOLD, 21));
+		panel_1_1.add(lblNewLabel_5_1);
 		
 		JPanel panel_1_1_1 = new JPanel();
 		panel_1_1_1.setBackground(new Color(79, 70, 229));
 		panel_1_1_1.setBounds(0, 0, 1271, 49);
 		contentPane.add(panel_1_1_1);
+		
+		JLabel lblNewLabel_5 = new JLabel("Library Management System");
+		lblNewLabel_5.setForeground(Color.WHITE);
+		lblNewLabel_5.setFont(new Font("Oswald", Font.BOLD, 25));
+		panel_1_1_1.add(lblNewLabel_5);
 		
 		JLabel lblNewLabel_2 = new JLabel("Book Management");
 		lblNewLabel_2.setFont(new Font("Segoe UI Symbol", Font.BOLD, 32));

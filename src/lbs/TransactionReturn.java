@@ -11,8 +11,9 @@ public class TransactionReturn extends Transaction {
     
 
     public TransactionReturn(String memberId, String itemId) {
+        // Use centralized TRN### id generator
         super(
-            "return-" + System.currentTimeMillis(),
+            TransactionIdGenerator.nextId(),
             memberId,
             itemId,
             LocalDate.now(), 
