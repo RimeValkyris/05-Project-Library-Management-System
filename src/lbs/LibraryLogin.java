@@ -215,44 +215,81 @@ public class LibraryLogin extends JFrame {
 	private ImageIcon tryLoadIcon(String... candidates) {
 		for (String p : candidates) {
 			if (p == null) continue;
+			// Diagnostic log for troubleshooting in JAR/IDE
+			System.out.println("[ResourceLookup] Trying path: '" + p + "'");
 			// 1) try classpath resource url
 			java.net.URL url = getClass().getResource(p);
 			if (url == null && !p.startsWith("/")) url = getClass().getResource("/" + p);
 			if (url != null) {
+				System.out.println("[ResourceLookup] Found resource URL: " + url);
 				return new ImageIcon(url);
 			}
 			// 2) try resource as stream (useful if resource is inside a jar)
 			InputStream is = getClass().getResourceAsStream(p);
 			if (is == null && !p.startsWith("/")) is = getClass().getResourceAsStream("/" + p);
 			if (is != null) {
+				System.out.println("[ResourceLookup] Found resource as stream: '" + p + "'");
 				try {
 					Image img = ImageIO.read(is);
 					if (img != null) return new ImageIcon(img);
 				} catch (IOException e) {
+					System.err.println("[ResourceLookup] Failed to read image from stream: " + e.getMessage());
 					// ignore and continue trying other paths
 				}
 			}
 			// 3) try filesystem paths
 			File f = new File(p);
 			if (f.exists()) {
+				System.out.println("[ResourceLookup] Found image on filesystem: " + f.getAbsolutePath());
 				return new ImageIcon(f.getAbsolutePath());
 			}
 			// 4) try common project-relative locations
 			f = new File("src" + File.separator + p);
-			if (f.exists()) return new ImageIcon(f.getAbsolutePath());
+			if (f.exists()) {
+				System.out.println("[ResourceLookup] Found image at src/ path: " + f.getAbsolutePath());
+				return new ImageIcon(f.getAbsolutePath());
+			}
 			f = new File("Images" + File.separator + p);
-			if (f.exists()) return new ImageIcon(f.getAbsolutePath());
+			if (f.exists()) {
+				System.out.println("[ResourceLookup] Found image at Images/ path: " + f.getAbsolutePath());
+				return new ImageIcon(f.getAbsolutePath());
+			}
 			f = new File("src" + File.separator + "Images" + File.separator + p);
-			if (f.exists()) return new ImageIcon(f.getAbsolutePath());
+			if (f.exists()) {
+				System.out.println("[ResourceLookup] Found image at src/Images/ path: " + f.getAbsolutePath());
+				return new ImageIcon(f.getAbsolutePath());
+			}
+		}
+		// Additional fallback: check for Images folder next to the running JAR or classes directory
+		try {
+			java.net.URL codeLoc = getClass().getProtectionDomain().getCodeSource().getLocation();
+			if (codeLoc != null) {
+				java.io.File codeFile = new java.io.File(codeLoc.toURI());
+				java.io.File jarDir = codeFile.isDirectory() ? codeFile : codeFile.getParentFile();
+				if (jarDir != null && jarDir.exists()) {
+					System.out.println("[ResourceLookup] Checking jar directory for Images: " + jarDir.getAbsolutePath());
+					for (String p : candidates) {
+						if (p == null) continue;
+						java.io.File f = new java.io.File(jarDir, "Images" + java.io.File.separator + (p.startsWith("/") ? p.substring(1) : p));
+						if (f.exists()) {
+							System.out.println("[ResourceLookup] Found image in jar-dir Images/: " + f.getAbsolutePath());
+							return new ImageIcon(f.getAbsolutePath());
+						}
+						// also try directly in jar dir
+						f = new java.io.File(jarDir, (p.startsWith("/") ? p.substring(1) : p));
+						if (f.exists()) {
+							System.out.println("[ResourceLookup] Found image in jar-dir: " + f.getAbsolutePath());
+							return new ImageIcon(f.getAbsolutePath());
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("[ResourceLookup] Failed to check jar directory: " + e.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * Scale the provided Image to fill (cover) the target maxW x maxH preserving aspect ratio.
-	 * The returned Image is exactly maxW x maxH; the source is scaled (up or down) and
-	 * centered so the target area is fully covered, cropping overflow.
-	 */
 	private Image getScaledImage(Image src, int maxW, int maxH) {
 		if (src == null) return null;
 		int w = src.getWidth(null);

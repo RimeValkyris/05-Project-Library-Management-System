@@ -243,68 +243,14 @@ public class LibraryDashboard extends JFrame {
 		lblNewLabel_5_1.setFont(new Font("Oswald", Font.BOLD, 21));
 		panel_1_1.add(lblNewLabel_5_1);
 		
-		JLabel lblNewLabel = new JLabel();
-		// banner size: keep in sync with setBounds below
-		int bannerW = 1025;
-		int bannerH = 188;
-		lblNewLabel.setBounds(245, 48, 1058, 188);
-		// attempt to load the image from classpath first, fallback to Images/ folder on disk
-		String imgResourcePath = "/Images/SchoolLibraryLoginIn.jpg";
-		ImageIcon icon = null;
-		java.net.URL imgUrl = getClass().getResource(imgResourcePath);
-		if (imgUrl != null) {
-			icon = new ImageIcon(imgUrl);
-		} else {
-			java.io.File f = new java.io.File("Images/SchoolLibraryLoginIn.jpg");
-			if (f.exists()) {
-				icon = new ImageIcon(f.getAbsolutePath());
-			}
-		}
-		if (icon != null) {
-			// COVER mode: scale to fill the banner area and crop overflow (no stretching)
-			Image srcImg = icon.getImage();
-			int srcW = srcImg.getWidth(null);
-			int srcH = srcImg.getHeight(null);
-			if (srcW > 0 && srcH > 0) {
-				double scale = Math.max((double) bannerW / srcW, (double) bannerH / srcH);
-				int destW = Math.max(1, (int) Math.round(srcW * scale));
-				int destH = Math.max(1, (int) Math.round(srcH * scale));
-				int x = (bannerW - destW) / 2;
-				int y = (bannerH - destH) / 2;
-				BufferedImage canvas = new BufferedImage(bannerW, bannerH, BufferedImage.TYPE_INT_ARGB);
-				Graphics2D g2 = canvas.createGraphics();
-				try {
-					// high quality rendering hints
-					g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-					g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					// fill plain background (no rounded corners)
-					g2.setColor(Color.WHITE);
-					g2.fillRect(0, 0, bannerW, bannerH);
-					// draw scaled image (no clipping to rounded shape)
-					g2.drawImage(srcImg, x, y, destW, destH, null);
-				} finally {
-					g2.dispose();
-				}
-				lblNewLabel.setIcon(new ImageIcon(canvas));
-			} else {
-				// fallback: use original icon if we couldn't measure it
-				lblNewLabel.setIcon(icon);
-			}
-		} else {
-			lblNewLabel.setText("Banner image not found");
-			lblNewLabel.setHorizontalAlignment(JLabel.CENTER);
-		}
-		contentPane.add(lblNewLabel);
-		
 		JLabel lblNewLabel_1 = new JLabel("LIBRARY DASHBOARD");
 		lblNewLabel_1.setFont(new Font("SansSerif", Font.BOLD, 24));
-		lblNewLabel_1.setBounds(608, 225, 275, 59);
+		lblNewLabel_1.setBounds(606, 60, 275, 59);
 		contentPane.add(lblNewLabel_1);
 		
 		JPanel panel_2_1_1 = new JPanel();
 		panel_2_1_1.setBackground(new Color(0, 204, 102));
-		panel_2_1_1.setBounds(941, 296, 226, 95);
+		panel_2_1_1.setBounds(947, 128, 226, 95);
 		contentPane.add(panel_2_1_1);
 		panel_2_1_1.setLayout(null);
 		
@@ -322,7 +268,7 @@ public class LibraryDashboard extends JFrame {
 		
 		JPanel panel_2_1_1_1 = new JPanel();
 		panel_2_1_1_1.setBackground(new Color(255, 153, 51));
-		panel_2_1_1_1.setBounds(618, 295, 226, 95);
+		panel_2_1_1_1.setBounds(625, 128, 226, 95);
 		contentPane.add(panel_2_1_1_1);
 		panel_2_1_1_1.setLayout(null);
 		
@@ -340,7 +286,7 @@ public class LibraryDashboard extends JFrame {
 		
 		JPanel panel_2_1_1_1_1 = new JPanel();
 		panel_2_1_1_1_1.setBackground(new Color(51, 153, 255));
-		panel_2_1_1_1_1.setBounds(315, 296, 226, 95);
+		panel_2_1_1_1_1.setBounds(315, 128, 226, 95);
 		contentPane.add(panel_2_1_1_1_1);
 		panel_2_1_1_1_1.setLayout(null);
 		
@@ -363,7 +309,7 @@ public class LibraryDashboard extends JFrame {
 		// Add Books Table
 		JLabel lblBooks = new JLabel("Books List");
 		lblBooks.setFont(new Font("SansSerif", Font.BOLD, 16));
-		lblBooks.setBounds(315, 400, 100, 20);
+		lblBooks.setBounds(315, 272, 100, 20);
 		contentPane.add(lblBooks);
 
 		String[] bookColumns = {"Title", "Author", "Genre", "Year"};
@@ -374,18 +320,7 @@ public class LibraryDashboard extends JFrame {
 				return false;
 			}
 		};
-		JTable bookTable = new JTable(bookModel);
-		bookTable.setRowHeight(28);
-		bookTable.setFillsViewportHeight(true);
-		bookTable.setShowGrid(false);
-		bookTable.setIntercellSpacing(new Dimension(6, 6));
-		bookTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		bookTable.setAutoCreateRowSorter(true);
-		// Header styling
-		JTableHeader bookHeader = bookTable.getTableHeader();
-		bookHeader.setReorderingAllowed(false);
-		bookHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
-		bookHeader.setBackground(new Color(245, 245, 245));
+		// Header styling moved below after the table is created to avoid using undefined variables
 		// Alternate row stripe renderer
 		DefaultTableCellRenderer stripeRenderer = new DefaultTableCellRenderer() {
 			@Override
@@ -403,15 +338,9 @@ public class LibraryDashboard extends JFrame {
 				return c;
 			}
 		};
-		bookTable.setDefaultRenderer(Object.class, stripeRenderer);
-		// column widths
-		bookTable.getColumnModel().getColumn(0).setPreferredWidth(240); // Title
-		bookTable.getColumnModel().getColumn(1).setPreferredWidth(160); // Author
-		bookTable.getColumnModel().getColumn(2).setPreferredWidth(120); // Genre
-		bookTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Year
 
-		JScrollPane bookScroll = new JScrollPane(bookTable);
-		bookScroll.setBounds(315, 420, 450, 200);
+		JScrollPane bookScroll = new JScrollPane();
+		bookScroll.setBounds(315, 303, 450, 354);
 		contentPane.add(bookScroll);
 
 		// Populate books
@@ -427,7 +356,7 @@ public class LibraryDashboard extends JFrame {
 		// Add Members Table
 		JLabel lblMembersTable = new JLabel("Members List");
 		lblMembersTable.setFont(new Font("SansSerif", Font.BOLD, 16));
-		lblMembersTable.setBounds(780, 400, 120, 20);
+		lblMembersTable.setBounds(780, 272, 120, 20);
 		contentPane.add(lblMembersTable);
 
 		String[] memberColumns = {"Member ID", "First Name", "Last Name", "Email"};
@@ -438,17 +367,7 @@ public class LibraryDashboard extends JFrame {
 				return false;
 			}
 		};
-		JTable memberTable = new JTable(memberModel);
-		memberTable.setRowHeight(28);
-		memberTable.setFillsViewportHeight(true);
-		memberTable.setShowGrid(false);
-		memberTable.setIntercellSpacing(new Dimension(6, 6));
-		memberTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		memberTable.setAutoCreateRowSorter(true);
-		JTableHeader memHeader = memberTable.getTableHeader();
-		memHeader.setReorderingAllowed(false);
-		memHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
-		memHeader.setBackground(new Color(245, 245, 245));
+		// Header styling moved below after the table is created to avoid using undefined variables
 		// reuse stripe renderer from above but align first column center
 		DefaultTableCellRenderer memRenderer = new DefaultTableCellRenderer() {
 			@Override
@@ -466,16 +385,52 @@ public class LibraryDashboard extends JFrame {
 				return c;
 			}
 		};
+
+		JScrollPane memberScroll = new JScrollPane();
+		memberScroll.setBounds(775, 303, 450, 354);
+		contentPane.add(memberScroll);
+		JTable bookTable = new JTable(bookModel);
+		// don't add the table directly to the content pane; show it through the scroll pane
+		bookTable.setRowHeight(28);
+ 		bookTable.setFillsViewportHeight(true);
+ 		bookTable.setShowGrid(false);
+ 		bookTable.setIntercellSpacing(new Dimension(6, 6));
+ 		bookTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+ 		bookTable.setAutoCreateRowSorter(true);
+ 		JTable memberTable = new JTable(memberModel);
+		// don't add the table directly to the content pane; show it through the scroll pane
+ 		memberTable.setRowHeight(28);
+ 		memberTable.setFillsViewportHeight(true);
+ 		memberTable.setShowGrid(false);
+ 		memberTable.setIntercellSpacing(new Dimension(6, 6));
+ 		memberTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+ 		memberTable.setAutoCreateRowSorter(true);
+		// Header styling for members
+		JTableHeader memberHeader = memberTable.getTableHeader();
+		memberHeader.setReorderingAllowed(false);
+		memberHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		memberHeader.setBackground(new Color(245, 245, 245));
 		memberTable.setDefaultRenderer(Object.class, memRenderer);
 		// column widths
 		memberTable.getColumnModel().getColumn(0).setPreferredWidth(90); // ID
 		memberTable.getColumnModel().getColumn(1).setPreferredWidth(140); // First
 		memberTable.getColumnModel().getColumn(2).setPreferredWidth(140); // Last
 		memberTable.getColumnModel().getColumn(3).setPreferredWidth(220); // Email
+		// Header styling for books
+		JTableHeader booksHeader = bookTable.getTableHeader();
+		booksHeader.setReorderingAllowed(false);
+		booksHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
+		booksHeader.setBackground(new Color(245, 245, 245));
+		bookTable.setDefaultRenderer(Object.class, stripeRenderer);
+		// column widths
+		bookTable.getColumnModel().getColumn(0).setPreferredWidth(240); // Title
+		bookTable.getColumnModel().getColumn(1).setPreferredWidth(160); // Author
+		bookTable.getColumnModel().getColumn(2).setPreferredWidth(120); // Genre
+		bookTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Year
 
-		JScrollPane memberScroll = new JScrollPane(memberTable);
-		memberScroll.setBounds(780, 420, 450, 200);
-		contentPane.add(memberScroll);
+		// Show tables inside their scroll panes so headers and data are visible
+		bookScroll.setViewportView(bookTable);
+		memberScroll.setViewportView(memberTable);
 
 		// Populate members
 		for (Member m : MemberManager.instance.getMembers()) {
