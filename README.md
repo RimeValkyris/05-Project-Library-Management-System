@@ -22,7 +22,3 @@
 - [@Sefqt](https://github.com/Sefqt)
 
 ###
-
-<h2 align="left">Running Requirements:</h2>
-
-###
