@@ -25,7 +25,7 @@ public class Book extends LibraryItem {
 
     // Getters
     public String getIsbn() {
-        return getItemId(); // isbn is stored as itemId in parent
+        return getItemId();
     }
 
     public String getAuthor() {

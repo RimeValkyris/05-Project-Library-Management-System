@@ -10,7 +10,7 @@ public class BookManager {
     private List<Transaction> transactions = new ArrayList<>();
 
     private BookManager() {
-        // Add sample books
+        // Add sample books for testing
         Book b1 = new Book("978-0-14-118280-3", "A Long Long Way", "Sebastian Barry", "Historical Fiction", "Faber & Faber", 2005);
         addBook(b1);
         Book b2 = new Book("978-0-19-921902-1", "Paradise Regained", "John Milton", "Poetry", "Oxford University Press", 1671);
@@ -94,7 +94,7 @@ public class BookManager {
         transactions.add(t);
     }
 
-    // Remove a transaction from the central list (safe removal API)
+    // Remove a transaction from the central list
     public boolean removeTransaction(Transaction t) {
         return transactions.remove(t);
     }

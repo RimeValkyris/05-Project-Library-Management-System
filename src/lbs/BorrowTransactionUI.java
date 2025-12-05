@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 public class BorrowTransactionUI extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private static BorrowTransactionUI currentInstance; // last opened instance for refresh
+    private static BorrowTransactionUI currentInstance;
 
     private JPanel contentPane;
     private JTextField memberIdField;
@@ -17,8 +17,8 @@ public class BorrowTransactionUI extends JFrame {
     private JTextField titleField;
     private JTextField todayField;
     private JTextField daysField;
-    private DefaultTableModel model; // borrowed table model
-    private DefaultTableModel returnModel; // returns table model
+    private DefaultTableModel model; 
+    private DefaultTableModel returnModel;
 
     public BorrowTransactionUI() {
         currentInstance = this;
@@ -211,7 +211,7 @@ public class BorrowTransactionUI extends JFrame {
 
         tabbedPane.addTab("Books", booksPanel);
 
-        // Tab 4: Return Books - display borrowed books for returning
+    
         JPanel returnsPanel = new JPanel();
         returnsPanel.setLayout(null);
 
@@ -258,7 +258,7 @@ public class BorrowTransactionUI extends JFrame {
         loadTransactionsIntoTables();
     }
 
-    // Load/refresh transactions into both Borrowed and Returns tables
+
     private void loadTransactionsIntoTables() {
         // Clear current models
         model.setRowCount(0);
@@ -266,7 +266,7 @@ public class BorrowTransactionUI extends JFrame {
             returnModel.setRowCount(0);
         }
 
-        // Diagnostic output to help debug why tables may be empty
+
         System.out.println("[DEBUG] BookManager transactions count: " + BookManager.instance.getTransactions().size());
 
         for (Transaction t : BookManager.instance.getTransactions()) {
@@ -291,14 +291,14 @@ public class BorrowTransactionUI extends JFrame {
         }
     }
 
-// Allow other UIs to trigger a refresh if the BorrowTransactionUI is open
+
     public static void refreshIfOpen() {
         if (currentInstance != null) {
             currentInstance.loadTransactionsIntoTables();
         }
     }
 
-    // Allow other UIs to refresh the members dropdown if this UI is open
+ 
     public static void refreshMembersIfOpen() {
         if (currentInstance != null && currentInstance.memberIdField != null) {
             currentInstance.memberIdField.setText("");
