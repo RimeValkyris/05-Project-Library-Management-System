@@ -23,7 +23,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
     
-    // Encapsulation: Private fields
+ 
     private JPanel contentPane;
     private JTextField txtMemberId;
     private JTextField txtBookId;
@@ -37,7 +37,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
     private JLabel lblActive;
     private JLabel lblOverdue;
     
-    // Business logic layer - Composition
+   
     private List<TransactionReturn> returnTransactions;
     private DateTimeFormatter dateFormatter;
     
@@ -47,7 +47,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
     public ReturnTransactionUI() {
         initializeBusinessLogic();
         initializeUI();
-        // No sample data on startup
+       
         updateStatistics();
     }
     
@@ -179,9 +179,6 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
      * Create statistics panel - Centered horizontally
      */
     private void createStatisticsPanel() {
-        // Calculate center positions for 3 panels (150px wide each with 20px gaps)
-        // Total width needed: 150 + 20 + 150 + 20 + 150 = 490px
-        // Frame width: 1165px, so start at: (1165 - 490) / 2 = 337px
         int startX = 337;
         int panelWidth = 150;
         int panelHeight = 80;
@@ -254,7 +251,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 7; // Only Action column is editable
+                return column == 7; 
             }
         };
         
@@ -290,7 +287,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
                         overdue++;
                     }
                 } catch (Exception e) {
-                    // Handle date parsing error
+                 
                 }
             }
         }
@@ -300,9 +297,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         lblOverdue.setText(String.valueOf(overdue));
     }
     
-    /**
-     * Polymorphism: Implementation of ActionListener interface
-     */
+  
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnReturn) {
@@ -314,9 +309,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         }
     }
     
-    /**
-     * Process return transaction - Business logic separated from UI
-     */
+  
     private void processReturnTransaction() {
         String memberId = txtMemberId.getText().trim();
         String transactionId = txtBookId.getText().trim();
@@ -351,7 +344,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
                 book.returnItem();
             }
 
-            // Calculate late fee (if any)
+            // Calculate late fee 
             double lateFee = 0.0;
             if (originalBorrow.getDueDate() != null) {
                 LocalDate today = LocalDate.now();
@@ -362,10 +355,9 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
             }
 
             // Generate a return transaction id prefixed by memberId
-            // Use centralized TRN### generator so IDs are like TRN001, TRN002, ...
             String returnTransId = TransactionIdGenerator.nextId();
 
-            // Create return transaction (use the full constructor to preserve details)
+       
             TransactionReturn returnTransaction = new TransactionReturn(
                     returnTransId,
                     memberId,
@@ -377,29 +369,22 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
                     ""
             );
 
-            // Process the transaction (business logic hook)
+     
             returnTransaction.processTransaction();
-
-            // Add to central manager so other UIs (like BorrowTransactionUI) can see it
             BookManager.instance.addTransaction(returnTransaction);
-
-            // Add to our local collection for the returns UI
             returnTransactions.add(returnTransaction);
 
-            // Also remove the original borrow transaction from manager if you want it considered returned
-            // (optional): remove the borrow transaction so it no longer appears as active
-            // We'll remove it from BookManager transactions list
             BookManager.instance.removeTransaction(originalBorrow);
 
-            // Refresh the borrow UI if it's open so tables reflect the change
+           
             BorrowTransactionUI.refreshIfOpen();
 
-            // Update UI
+            
             removeReturnedBookFromTable(memberId, transactionId);
             clearInputFields();
             updateStatistics();
 
-            // Show detailed success message in GUI
+       
             showTransactionResult(returnTransaction);
 
         } catch (Exception ex) {
@@ -501,32 +486,24 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(this, "No matching records found", "Search", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    /**
-     * Go back to previous screen
-     */
+   
     private void goBack() {
         // Close current window and return to LibraryDashboard
         this.dispose();
         new LibraryDashboard().setVisible(true);
     }
     
-    /**
-     * Get all return transactions - Getter method for encapsulation
-     */
+  
     public List<TransactionReturn> getReturnTransactions() {
         return new ArrayList<>(returnTransactions); // Return copy to maintain encapsulation
     }
     
-    /**
-     * Get transaction count - Abstraction of internal complexity
-     */
+   
     public int getTransactionCount() {
         return returnTransactions.size();
     }
     
-    /**
-     * Load borrowed books into the table
-     */
+  
     private void loadBorrowedBooks() {
         tableModel.setRowCount(0); // Clear table
         
@@ -543,7 +520,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
                         }
                     }
                     
-                    // Determine status
+                    
                     String status = "Active";
                     if (t.getDueDate() != null && LocalDate.now().isAfter(t.getDueDate())) {
                         status = "Overdue";
@@ -557,7 +534,7 @@ public class ReturnTransactionUI extends JFrame implements ActionListener {
                         t.getTransactionDate().toString(),
                         t.getDueDate() != null ? t.getDueDate().toString() : "N/A",
                         status,
-                        "Return" // Action column
+                        "Return" 
                     });
                 }
             }

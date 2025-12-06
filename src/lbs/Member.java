@@ -1,7 +1,7 @@
 package lbs;
 public class Member {
-		private String memberCode; // e.g., MEM001 (auto-generated)
-		private long studentNumber; // the student number entered by the user
+		private String memberCode; 
+		private long studentNumber; 
 		private String FirstName;
 		private String MiddleName;
 		private String LastName;
@@ -11,7 +11,7 @@ public class Member {
 		private long PhoneNumber;
 		private String DateJoined;
 		
-		// Constructor: accepts studentNumber and other fields and auto-generates memberCode
+		// Constructor
 		public Member(long studentNumber, String firstName, String middleName, String lastName, String course,
 					String sectionAndYear, String email, long phoneNumber, String dateJoined) {
 			super();
@@ -27,7 +27,7 @@ public class Member {
 			DateJoined = dateJoined;
 		}
 		
-		// Optional constructor when loading with an existing memberCode
+		
 		public Member(String memberCode, long studentNumber, String firstName, String middleName, String lastName, String course,
 					String sectionAndYear, String email, long phoneNumber, String dateJoined) {
 			super();

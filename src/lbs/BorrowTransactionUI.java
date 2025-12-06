@@ -142,7 +142,7 @@ public class BorrowTransactionUI extends JFrame {
         lblBorrowed.setBounds(10, 10, 200, 30);
         borrowedPanel.add(lblBorrowed);
 
-        // Include Transaction ID so users can reference it in the Return screen
+       
         String[] columnNames = {"Transaction ID", "Title", "ISBN", "Member ID", "Issue Date", "Due Date"};
         model = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(model);
@@ -152,7 +152,7 @@ public class BorrowTransactionUI extends JFrame {
 
         tabbedPane.addTab("Borrowed Books", borrowedPanel);
 
-        // Tab 2: Members
+     
         JPanel membersPanel = new JPanel();
         membersPanel.setLayout(null);
 
@@ -322,15 +322,15 @@ public class BorrowTransactionUI extends JFrame {
                 return;
             }
 
-            // Create BorrowTransaction object
+         
             BorrowTransaction transaction = new BorrowTransaction(memberCode, isbn, days);
             transaction.processTransaction();
 
-            // Add transaction to manager
+          
             BookManager.instance.addTransaction(transaction);
             book.checkOut();
 
-            // Refresh tables so all tabs show updated information
+          
             loadTransactionsIntoTables();
 
             JOptionPane.showMessageDialog(this, "Book issued successfully!");

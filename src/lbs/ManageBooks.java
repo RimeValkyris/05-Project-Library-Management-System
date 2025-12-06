@@ -31,7 +31,7 @@ public class ManageBooks extends JFrame {
 	
 	private BookManager bookManager = BookManager.instance;
 	
-	// Update mode variables
+
 	private boolean isUpdateMode = false;
 	private int updateIndex = -1;
 
@@ -207,7 +207,7 @@ public class ManageBooks extends JFrame {
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Get the table model
+			
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				
 				// Get text from input fields
@@ -218,7 +218,7 @@ public class ManageBooks extends JFrame {
 				String publisher = textField_4.getText().trim();
 				String year = textField_5.getText().trim();
 				
-				// Validate input - check if all fields are filled
+			
 				if (isbn.isEmpty() || title.isEmpty() || author.isEmpty() || 
 					genre.isEmpty() || publisher.isEmpty() || year.isEmpty()) {
 					javax.swing.JOptionPane.showMessageDialog(ManageBooks.this, 
@@ -227,7 +227,7 @@ public class ManageBooks extends JFrame {
 					return;
 				}
 				
-				// Validate year is a number
+			
 				try {
 					Integer.parseInt(year);
 				} catch (NumberFormatException ex) {
@@ -237,15 +237,15 @@ public class ManageBooks extends JFrame {
 					return;
 				}
 				
-				// Create new book object
+		
 				Book newBook = new Book(isbn, title, author, genre, publisher, Integer.parseInt(year));
 				bookManager.addBook(newBook);
 				
-				// Add new row to table with status
+		
 				String status = newBook.isAvailable() ? "Available" : "Checked Out";
 				model.addRow(new Object[]{isbn, title, author, genre, publisher, year, status});
 				
-				// Clear input fields after adding
+		
 				textField.setText("");
 				textField_1.setText("");
 				textField_2.setText("");
@@ -253,7 +253,7 @@ public class ManageBooks extends JFrame {
 				textField_4.setText("");
 				textField_5.setText("");
 				
-				// Show success message
+				
 				javax.swing.JOptionPane.showMessageDialog(ManageBooks.this, 
 					"Book added successfully!", "Success", 
 					javax.swing.JOptionPane.INFORMATION_MESSAGE);
@@ -280,13 +280,13 @@ public class ManageBooks extends JFrame {
 					return;
 				}
 				
-				// Get confirmation
+			
 				int confirm = javax.swing.JOptionPane.showConfirmDialog(ManageBooks.this, 
 					"Are you sure you want to delete this book?", "Confirm Delete", 
 					javax.swing.JOptionPane.YES_NO_OPTION);
 				
 				if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-					// Remove from list and table
+				
 					bookManager.removeBook(selectedRow);
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.removeRow(selectedRow);
@@ -311,7 +311,7 @@ public class ManageBooks extends JFrame {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!isUpdateMode) {
-					// Load mode: Get selected book and populate fields
+				
 					int selectedRow = table.getSelectedRow();
 					if (selectedRow == -1) {
 						javax.swing.JOptionPane.showMessageDialog(ManageBooks.this, 
@@ -320,7 +320,7 @@ public class ManageBooks extends JFrame {
 						return;
 					}
 					
-					// Get the book from the list
+				
 					Book selectedBook = bookManager.getBook(selectedRow);
 					
 					// Populate text fields with book data
@@ -331,7 +331,7 @@ public class ManageBooks extends JFrame {
 					textField_4.setText(selectedBook.getPublisher());
 					textField_5.setText(String.valueOf(selectedBook.getYear()));
 					
-					// Set update mode
+				
 					isUpdateMode = true;
 					updateIndex = selectedRow;
 					btnUpdate.setText("Save Update");
@@ -341,7 +341,7 @@ public class ManageBooks extends JFrame {
 						"Update Mode", 
 						javax.swing.JOptionPane.INFORMATION_MESSAGE);
 				} else {
-					// Save mode: Update the book with new data
+				
 					String isbn = textField.getText().trim();
 					String title = textField_1.getText().trim();
 					String author = textField_2.getText().trim();
@@ -349,7 +349,7 @@ public class ManageBooks extends JFrame {
 					String publisher = textField_4.getText().trim();
 					String year = textField_5.getText().trim();
 					
-					// Validate input
+				
 					if (isbn.isEmpty() || title.isEmpty() || author.isEmpty() || 
 						genre.isEmpty() || publisher.isEmpty() || year.isEmpty()) {
 						javax.swing.JOptionPane.showMessageDialog(ManageBooks.this, 
@@ -358,7 +358,7 @@ public class ManageBooks extends JFrame {
 						return;
 					}
 					
-					// Validate year is a number
+			
 					try {
 						Integer.parseInt(year);
 					} catch (NumberFormatException ex) {
@@ -368,14 +368,14 @@ public class ManageBooks extends JFrame {
 						return;
 					}
 					
-					// Create updated book object
+				
 					Book updatedBook = new Book(isbn, title, author, genre, publisher, Integer.parseInt(year));
 					
-					// Update the book in the list and table
+				
 					bookManager.updateBook(updateIndex, updatedBook);
 					refreshTable();
 					
-					// Clear fields and reset mode
+			
 					textField.setText("");
 					textField_1.setText("");
 					textField_2.setText("");
@@ -484,16 +484,16 @@ public class ManageBooks extends JFrame {
 				String searchText = textField_6.getText().trim();
 				
 				if (searchText.isEmpty()) {
-					// If search is empty, show all books
+					
 					refreshTable();
 					return;
 				}
 				
-				// Clear current table
+		
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				model.setRowCount(0);
 				
-				// Filter and add matching books
+			
 				List<Book> results = bookManager.searchBooks(searchText);
 				for (Book book : results) {
 					String displayStatus = book.isAvailable() ? "Available" : "Checked Out";
@@ -565,7 +565,7 @@ public class ManageBooks extends JFrame {
 		scrollPane.setBounds(441, 158, 820, 450);
 		contentPane.add(scrollPane);
 		
-		// Populate the table with existing books
+
 		refreshTable();
 	}
 	
@@ -574,9 +574,9 @@ public class ManageBooks extends JFrame {
 	 */
 	private void refreshTable() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
-		model.setRowCount(0); // Clear table
+		model.setRowCount(0); 
 		
-		// Add all books from the list
+		
 		for (Book book : bookManager.getBooks()) {
 			String status = book.isAvailable() ? "Available" : "Checked Out";
 			model.addRow(new Object[]{

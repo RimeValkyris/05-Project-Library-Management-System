@@ -11,7 +11,6 @@ public class TransactionReturn extends Transaction {
     
 
     public TransactionReturn(String memberId, String itemId) {
-        // Use centralized TRN### id generator
         super(
             TransactionIdGenerator.nextId(),
             memberId,
@@ -78,7 +77,7 @@ public class TransactionReturn extends Transaction {
         LocalDate originalDueDate = findOriginalDueDate();
         if (originalDueDate != null && returnDate.isAfter(originalDueDate)) {
             long daysLate = ChronoUnit.DAYS.between(originalDueDate, returnDate);
-            this.lateFee = daysLate * 2.0; // $2 per day late fee
+            this.lateFee = daysLate * 2.0; 
         } else {
             this.lateFee = 0.0;
         }
@@ -89,7 +88,7 @@ public class TransactionReturn extends Transaction {
         return transactionDate.plusDays(14);
     }
     
-    // Polymorphism: Override abstract method from parent class
+ 
     @Override
     public void processTransaction() {
         validateReturn();

@@ -55,7 +55,7 @@ public class LibraryLogin extends JFrame {
 	 * Create the frame.
 	 */
 	public LibraryLogin() {
-		// Initialize admin user using OOP encapsulation
+
 		adminUser = new User("admin", "password");
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,10 +66,10 @@ public class LibraryLogin extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		// white background like the mockup
+
 		contentPane.setBackground(Color.WHITE);
 		
-		// Large centered heading
+
 		lblNewLabel_1 = new JLabel("Welcome!");
 		lblNewLabel_1.setFont(new Font("SansSerif", Font.BOLD, 25));
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -82,7 +82,7 @@ public class LibraryLogin extends JFrame {
 		contentPane.add(lblNewLabel);
 		
 		textField = new JTextField();
-		// wider rounded text field
+
 		textField.setBounds(482, 169, 285, 28);
 		textField.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		textField.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true));
@@ -96,7 +96,7 @@ public class LibraryLogin extends JFrame {
 		lblPassword.setBounds(482, 219, 285, 20);
 		contentPane.add(lblPassword);
 		
-		// use JPasswordField for password input
+	
 		textField_1 = new JPasswordField();
 		textField_1.setBounds(482, 239, 285, 28);
 		textField_1.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -107,7 +107,7 @@ public class LibraryLogin extends JFrame {
 		contentPane.add(textField_1);
 		
 		JButton btnNewButton = new JButton("Login");
-		// match text fields width and use a large rounded gray button
+
 		btnNewButton.setBounds(511, 299, 223, 28);
 		btnNewButton.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		btnNewButton.setBackground(new Color(230, 230, 230));
@@ -117,8 +117,7 @@ public class LibraryLogin extends JFrame {
 		btnNewButton.setFocusPainted(false);
 		contentPane.add(btnNewButton);
 		
-		JLabel lblNewLabel_2 = new JLabel("");
-		// Improved image loading: try classpath and file-system fallbacks, and provide diagnostic tooltip if not found.
+		JLabel lblNewLabel_2 = new JLabel(""); // fixed stray token removal
 		String[] candidates = new String[] {
 			"/SchoolLibraryLogIn.png",
 			"SchoolLibraryLogIn.png",
@@ -129,7 +128,7 @@ public class LibraryLogin extends JFrame {
 			"uno.jpg"
 		};
 		ImageIcon icon = tryLoadIcon(candidates);
-		// Prefer the known repository Images path if the previous attempts failed
+	
 		if (icon == null) {
 			// check using JVM working directory; this helps when running from IDE where working dir = project root
 			String proj = System.getProperty("user.dir");
@@ -208,7 +207,7 @@ public class LibraryLogin extends JFrame {
 					return;
 				}
 				
-				// Use OOP: Encapsulate authentication logic in User object
+		
 				if (adminUser.validateCredentials(username, password)) {
 					// Login successful - open dashboard
 					LibraryDashboard dashboard = new LibraryDashboard();
@@ -220,7 +219,7 @@ public class LibraryLogin extends JFrame {
 						"Invalid username or password!", "Login Failed", 
 						javax.swing.JOptionPane.ERROR_MESSAGE);
 					
-					// Clear password field for security
+				
 					textField_1.setText("");
 				}
 			}
@@ -238,16 +237,16 @@ public class LibraryLogin extends JFrame {
 	private ImageIcon tryLoadIcon(String... candidates) {
 		for (String p : candidates) {
 			if (p == null) continue;
-			// Diagnostic log for troubleshooting in JAR/IDE
+			
 			System.out.println("[ResourceLookup] Trying path: '" + p + "'");
-			// 1) try classpath resource url
+			
 			java.net.URL url = getClass().getResource(p);
 			if (url == null && !p.startsWith("/")) url = getClass().getResource("/" + p);
 			if (url != null) {
 				System.out.println("[ResourceLookup] Found resource URL: " + url);
 				return new ImageIcon(url);
 			}
-			// 2) try resource as stream (useful if resource is inside a jar)
+		
 			InputStream is = getClass().getResourceAsStream(p);
 			if (is == null && !p.startsWith("/")) is = getClass().getResourceAsStream("/" + p);
 			if (is != null) {
@@ -257,16 +256,16 @@ public class LibraryLogin extends JFrame {
 					if (img != null) return new ImageIcon(img);
 				} catch (IOException e) {
 					System.err.println("[ResourceLookup] Failed to read image from stream: " + e.getMessage());
-					// ignore and continue trying other paths
+			
 				}
 			}
-			// 3) try filesystem paths
+		
 			File f = new File(p);
 			if (f.exists()) {
 				System.out.println("[ResourceLookup] Found image on filesystem: " + f.getAbsolutePath());
 				return new ImageIcon(f.getAbsolutePath());
 			}
-			// 4) try common project-relative locations
+		
 			f = new File("src" + File.separator + p);
 			if (f.exists()) {
 				System.out.println("[ResourceLookup] Found image at src/ path: " + f.getAbsolutePath());
@@ -283,7 +282,7 @@ public class LibraryLogin extends JFrame {
 				return new ImageIcon(f.getAbsolutePath());
 			}
 		}
-		// Additional fallback: check for Images folder next to the running JAR or classes directory
+
 		try {
 			java.net.URL codeLoc = getClass().getProtectionDomain().getCodeSource().getLocation();
 			if (codeLoc != null) {
@@ -298,7 +297,7 @@ public class LibraryLogin extends JFrame {
 							System.out.println("[ResourceLookup] Found image in jar-dir Images/: " + f.getAbsolutePath());
 							return new ImageIcon(f.getAbsolutePath());
 						}
-						// also try directly in jar dir
+				
 						f = new java.io.File(jarDir, (p.startsWith("/") ? p.substring(1) : p));
 						if (f.exists()) {
 							System.out.println("[ResourceLookup] Found image in jar-dir: " + f.getAbsolutePath());
@@ -318,18 +317,18 @@ public class LibraryLogin extends JFrame {
 		int w = src.getWidth(null);
 		int h = src.getHeight(null);
 		if (w <= 0 || h <= 0) return src;
-		// COVER behavior: scale so the image fills the target area (may crop)
+	
 		double scale = Math.max((double) maxW / w, (double) maxH / h);
 		int nw = Math.max(1, (int) Math.round(w * scale));
 		int nh = Math.max(1, (int) Math.round(h * scale));
 		BufferedImage canvas = new BufferedImage(maxW, maxH, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = canvas.createGraphics();
 		try {
-			// high-quality rendering hints
+	
 			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			// draw the scaled image centered; negative x/y will crop edges automatically
+		
 			int x = (maxW - nw) / 2;
 			int y = (maxH - nh) / 2;
 			g2.drawImage(src, x, y, nw, nh, null);

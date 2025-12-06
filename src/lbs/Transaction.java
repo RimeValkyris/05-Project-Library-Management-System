@@ -2,9 +2,7 @@ package lbs;
 
 import java.time.LocalDate;
 
-/**
- * Abstract base class for all types of transactions.
- */
+
 public abstract class Transaction {
     protected String transactionId;
     protected String memberId;
@@ -48,6 +46,6 @@ public abstract class Transaction {
 
     public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 
-    // Abstract method — each subclass defines how it processes its own transaction
+   
     public abstract void processTransaction();
 }

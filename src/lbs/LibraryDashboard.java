@@ -50,8 +50,6 @@ public class LibraryDashboard extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-
-
 	/**
 	 * Create the frame.
 	 */
@@ -367,8 +365,7 @@ public class LibraryDashboard extends JFrame {
 				return false;
 			}
 		};
-		// Header styling moved below after the table is created to avoid using undefined variables
-		// reuse stripe renderer from above but align first column center
+
 		DefaultTableCellRenderer memRenderer = new DefaultTableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -390,7 +387,7 @@ public class LibraryDashboard extends JFrame {
 		memberScroll.setBounds(775, 303, 450, 354);
 		contentPane.add(memberScroll);
 		JTable bookTable = new JTable(bookModel);
-		// don't add the table directly to the content pane; show it through the scroll pane
+
 		bookTable.setRowHeight(28);
  		bookTable.setFillsViewportHeight(true);
  		bookTable.setShowGrid(false);
@@ -398,41 +395,41 @@ public class LibraryDashboard extends JFrame {
  		bookTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
  		bookTable.setAutoCreateRowSorter(true);
  		JTable memberTable = new JTable(memberModel);
-		// don't add the table directly to the content pane; show it through the scroll pane
+
  		memberTable.setRowHeight(28);
  		memberTable.setFillsViewportHeight(true);
  		memberTable.setShowGrid(false);
  		memberTable.setIntercellSpacing(new Dimension(6, 6));
  		memberTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
  		memberTable.setAutoCreateRowSorter(true);
-		// Header styling for members
+
 		JTableHeader memberHeader = memberTable.getTableHeader();
 		memberHeader.setReorderingAllowed(false);
 		memberHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		memberHeader.setBackground(new Color(245, 245, 245));
 		memberTable.setDefaultRenderer(Object.class, memRenderer);
-		// column widths
+
 		memberTable.getColumnModel().getColumn(0).setPreferredWidth(90); // ID
 		memberTable.getColumnModel().getColumn(1).setPreferredWidth(140); // First
 		memberTable.getColumnModel().getColumn(2).setPreferredWidth(140); // Last
 		memberTable.getColumnModel().getColumn(3).setPreferredWidth(220); // Email
-		// Header styling for books
+	
 		JTableHeader booksHeader = bookTable.getTableHeader();
 		booksHeader.setReorderingAllowed(false);
 		booksHeader.setFont(new Font("Segoe UI", Font.BOLD, 14));
 		booksHeader.setBackground(new Color(245, 245, 245));
 		bookTable.setDefaultRenderer(Object.class, stripeRenderer);
-		// column widths
+		
 		bookTable.getColumnModel().getColumn(0).setPreferredWidth(240); // Title
 		bookTable.getColumnModel().getColumn(1).setPreferredWidth(160); // Author
 		bookTable.getColumnModel().getColumn(2).setPreferredWidth(120); // Genre
 		bookTable.getColumnModel().getColumn(3).setPreferredWidth(60);  // Year
 
-		// Show tables inside their scroll panes so headers and data are visible
+	
 		bookScroll.setViewportView(bookTable);
 		memberScroll.setViewportView(memberTable);
 
-		// Populate members
+	
 		for (Member m : MemberManager.instance.getMembers()) {
 			memberModel.addRow(new Object[]{
 				m.getMemberCode(),
@@ -445,7 +442,7 @@ public class LibraryDashboard extends JFrame {
 	
 	public void updateStatistics() {
 		totalBooks = BookManager.instance.getBookCount();
-		// Assuming issued books count is not yet tracked, defaulting to 0
+
 		issuedBooks = BookManager.instance.getIssuedBookCount(); 
 		members = MemberManager.instance.getMemberCount();
 
